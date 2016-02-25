@@ -326,6 +326,17 @@ function ItemAnalysis_InspectRaidProgress(player)
     end
 end
 
+function GetRealItemLevel(itemlink)
+	local S_UPGRADE_LEVEL   = "^" .. gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)")
+	local scantip = CreateFrame("GameTooltip", "MyScanningTooltip", nil, "GameTooltipTemplate")
+	scantip:SetOwner(UIParent, "ANCHOR_NONE")
+	scantip:SetHyperlink(itemLink)
+	itemlvlLine = _G["MyScanningTooltipTextLeft2"]:GetText() -- item level
+	_,_,ilvl = strsplit(" ", itemlvlLine, 3)
+	--print("replaceing "..itemIlvl.." with "..ilvl)
+	return tonumber(ilvl)					
+end
+
 function ItemAnalysis_ScanTarget()
 	local playerName = UnitName("target");
 	local class, classFileName = UnitClass("target");
@@ -375,6 +386,9 @@ function ItemAnalysis_ScanTarget()
 			local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?");
 			local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemLink);
 			local stats = GetItemStats(itemLink);
+			if itemQuality == 7 then -- if heirloom
+				itemIlvl = GetRealItemLevel(itemLink)
+			end
 			storedPlayer["gear"][slotName]["link"] = itemLink;
 			storedPlayer["gear"][slotName]["name"] = itemName;
 			storedPlayer["gear"][slotName]["ilvl"] = itemIlvl;
