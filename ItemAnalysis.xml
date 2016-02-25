@@ -1,0 +1,57 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Font name="Default_Font" font="Fonts\FRIZQT__.TTF" virtual="true">
+    <FontHeight>
+      <AbsValue val="12"/>
+    </FontHeight>
+  </Font>
+  <Texture name="ItemAnalysis_TextureTemplate" file="sometexture" virtual="true">
+    <Size x="100" y="100"/>
+  </Texture>
+  <Frame name="ItemAnalysis_FrameTemplate" parent="UIParent" virtual="true">
+    <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+          edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+      <BackgroundInsets>
+        <AbsInset left="11" right="12" top="12" bottom="11"/>
+      </BackgroundInsets>
+      <TileSize>
+        <AbsValue val="32"/>
+      </TileSize>
+      <EdgeSize>
+        <AbsValue val="32"/>
+      </EdgeSize>
+    </Backdrop>
+    <Layers>
+      <Layer>
+		<!--
+        <Texture inherits="ItemAnalysis_TextureTemplate">
+          <Anchors>
+            <Anchor point="TOP"/>
+          </Anchors>
+        </Texture>
+		-->
+		<FontString text="Test" inherits="Default_Font">
+			<Color r="1" g="0.8" b="1" a="1"/>
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" x="20" y="-20" />
+			</Anchors>
+			<Shadow>
+				<Offset x="1" y="1" />
+				<Color r="0" g="0" b="0"/>
+			</Shadow>
+		</FontString>
+      </Layer>
+    </Layers>
+  </Frame>
+  <Frame name="ItemAnalysis_Frame" inherits="ItemAnalysis_FrameTemplate" hidden="true">
+	<Scripts>
+	  <OnLoad>ItemAnalysis_InitializeAddon()</OnLoad>
+      <OnEvent>ItemAnalysis_OnEvent(self, event, ...)</OnEvent>
+    </Scripts>
+    <Size>
+      <AbsDimension x="200" y="200" />
+    </Size>
+    <Anchors>
+      <Anchor point="CENTER" />
+    </Anchors>
+  </Frame>
+</Ui>
