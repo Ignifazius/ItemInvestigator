@@ -61,6 +61,16 @@ ItemAnalysis_LoadUpgradeLevels({
 	
 	--Newly added upgrade levels in 5.4.8
 	["504"] = 12,
-	["505"] = 16
+	["505"] = 16,
+	
+	-- added in 6.0.0 and later
+	["523"] = 0,
+	
+	["529"] = 0,
+	["530"] = 5,
+	["531"] = 10,
+	
+	-- legendary ring, just "fake" the upgrade lvl, since the addon otherwise assumes the ring can be upgraded, but isnt
+	["641"] = 1
 });
 
