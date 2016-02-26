@@ -326,15 +326,20 @@ function ItemAnalysis_InspectRaidProgress(player)
     end
 end
 
-function GetRealItemLevel(itemlink)
-	local S_UPGRADE_LEVEL   = "^" .. gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)")
-	local scantip = CreateFrame("GameTooltip", "MyScanningTooltip", nil, "GameTooltipTemplate")
+function GetRealItemLevel(itemLink)
+	local S_ITEM_LEVEL = "^"..gsub(ITEM_LEVEL, "%%d", "(%%d+)")
+	local scantip = CreateFrame("GameTooltip", "HiddenTooltip", nil, "GameTooltipTemplate")
 	scantip:SetOwner(UIParent, "ANCHOR_NONE")
 	scantip:SetHyperlink(itemLink)
-	itemlvlLine = _G["MyScanningTooltipTextLeft2"]:GetText() -- item level
-	_,_,ilvl = strsplit(" ", itemlvlLine, 3)
-	--print("replaceing "..itemIlvl.." with "..ilvl)
-	return tonumber(ilvl)					
+	for i=2,5 do 
+		itemlvlLine = _G["HiddenTooltipTextLeft"..i]:GetText()	
+		if itemlvlLine and itemlvlLine ~= "" then
+			local realIlvl = strmatch(itemlvlLine, S_ITEM_LEVEL)
+			if realIlvl then
+				return tonumber(realIlvl)
+			end
+		end
+	end				
 end
 
 function ItemAnalysis_ScanTarget()
@@ -383,12 +388,17 @@ function ItemAnalysis_ScanTarget()
 				print("The escaped link is: ", itemLink:gsub("|", "||"));
 			end
 
-			local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?");
+			local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?"); --somewhat outdated
 			local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemLink);
 			local stats = GetItemStats(itemLink);
+			
 			if itemQuality == 7 then -- if heirloom
 				itemIlvl = GetRealItemLevel(itemLink)
 			end
+			
+			Upgrade = 0;
+			Upgrade = string.match(itemLink, ":%d*:(%d-)|h%[") -- get the last digit of the itemLink (which is always the upgrade lvl; items have, depending on 3rd stat, socket etc. a different amount of digits in the itemString)
+
 			storedPlayer["gear"][slotName]["link"] = itemLink;
 			storedPlayer["gear"][slotName]["name"] = itemName;
 			storedPlayer["gear"][slotName]["ilvl"] = itemIlvl;
