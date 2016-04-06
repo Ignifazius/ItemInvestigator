@@ -1,4 +1,4 @@
-﻿ItemAnalysis_AddLocale("zhCN", {
+﻿ItemInvestigator_AddLocale("zhCN", {
 	["StartAnalysis"] = "物品分析：选择玩家开始分析",
 	["ScannedMinutesAgo"] = "%i 分钟前扫描过",
 	["ScannedHoursAgo"] = "%i 小时前扫描过",

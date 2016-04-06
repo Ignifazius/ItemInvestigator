@@ -4,10 +4,10 @@
       <AbsValue val="12"/>
     </FontHeight>
   </Font>
-  <Texture name="ItemAnalysis_TextureTemplate" file="sometexture" virtual="true">
+  <Texture name="ItemInvestigator_TextureTemplate" file="sometexture" virtual="true">
     <Size x="100" y="100"/>
   </Texture>
-  <Frame name="ItemAnalysis_FrameTemplate" parent="UIParent" virtual="true">
+  <Frame name="ItemInvestigator_FrameTemplate" parent="UIParent" virtual="true">
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
           edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
       <BackgroundInsets>
@@ -23,7 +23,7 @@
     <Layers>
       <Layer>
 		<!--
-        <Texture inherits="ItemAnalysis_TextureTemplate">
+        <Texture inherits="ItemInvestigator_TextureTemplate">
           <Anchors>
             <Anchor point="TOP"/>
           </Anchors>
@@ -42,10 +42,10 @@
       </Layer>
     </Layers>
   </Frame>
-  <Frame name="ItemAnalysis_Frame" inherits="ItemAnalysis_FrameTemplate" hidden="true">
+  <Frame name="ItemInvestigator_Frame" inherits="ItemInvestigator_FrameTemplate" hidden="true">
 	<Scripts>
-	  <OnLoad>ItemAnalysis_InitializeAddon()</OnLoad>
-      <OnEvent>ItemAnalysis_OnEvent(self, event, ...)</OnEvent>
+	  <OnLoad>ItemInvestigator_InitializeAddon()</OnLoad>
+      <OnEvent>ItemInvestigator_OnEvent(self, event, ...)</OnEvent>
     </Scripts>
     <Size>
       <AbsDimension x="200" y="200" />

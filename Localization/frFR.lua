@@ -1,4 +1,4 @@
-ItemAnalysis_AddLocale("frFR", {
+ItemInvestigator_AddLocale("frFR", {
     ["StartAnalysis"] = "Item Analysis: sélectionner un joueur pour commencer l'analyse",
     ["ScannedMinutesAgo"] = "Scanné depuis %i minutes",
     ["ScannedHoursAgo"] = "Scanné depuis %i heures",

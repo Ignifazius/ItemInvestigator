@@ -50,7 +50,7 @@ end
 --	65  PALADIN_Holy
 --	270 MONK_Mistweaver
 	
-ItemAnalysis_LoadFivePercentStatsBonus({
+ItemInvestigator_LoadFivePercentStatsBonus({
 [Set{103,254,63,268,65,256,267,72}]	= "ITEM_MOD_CRIT_RATING_SHORT",
 [Set{251,105,66,258,260,263,265}] = "ITEM_MOD_HASTE_RATING_SHORT",
 [Set{102,104,253,62,70,259,264,266,71,73}] = "ITEM_MOD_MASTERY_RATING_SHORT",

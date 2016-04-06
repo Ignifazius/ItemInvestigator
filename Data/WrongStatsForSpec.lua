@@ -8,7 +8,7 @@ end
 -- Items both have Int and Str for instance but the activated is the stat is the one
 -- for the spec of the player not the one for the target.
 	
-ItemAnalysis_LoadWrongStatsForSpec({
+ItemInvestigator_LoadWrongStatsForSpec({
 --	Strength Tanks
 --	250 DEATHKNIGHT_Blood
 --	73  WARRIOR_Protection

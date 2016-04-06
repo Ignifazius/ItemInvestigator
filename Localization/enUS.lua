@@ -1,4 +1,4 @@
-ItemAnalysis_AddLocale("enUS", {
+ItemInvestigator_AddLocale("enUS", {
 	["StartAnalysis"] = "Item Analysis: select player to start analysis",
 	["ConfigSpecLabel"] = "Remember all scanned specializations",
 	["ConfigSpecLabelTooltip"] = "Remember all specializations a target was scanned in",

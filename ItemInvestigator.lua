@@ -1,7 +1,7 @@
 -----------------------
 --Global Variables
 -----------------------
-SLASH_ITEMANALYSIS1, SLASH_ITEMANALYSIS2 = "/itemanalysis", "/ia";
+SLASH_ItemInvestigator1, SLASH_ItemInvestigator2 = "/ItemInvestigator", "/ii";
 -----------------------
 --Local Variables
 -----------------------
@@ -40,7 +40,7 @@ local configCheckboxRaid = nil;
 local configCheckboxRaidsInCombat = nil;
 local configCheckboxGuild = nil;
 
-function ItemAnalysis_CreateCheckbox(label, description, onClick)
+function ItemInvestigator_CreateCheckbox(label, description, onClick)
 	local check = CreateFrame("CheckButton", "IAConfigCheckbox" .. label, configFrame, "InterfaceOptionsCheckButtonTemplate")
 	check:SetScript("OnClick", function(self)
 		PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
@@ -53,41 +53,41 @@ function ItemAnalysis_CreateCheckbox(label, description, onClick)
 	return check
 end
 
-function ItemAnalysis_CreateConfigFrame()
+function ItemInvestigator_CreateConfigFrame()
 	configTitle = configFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     configTitle:SetPoint("TOPLEFT", 16, -16)
-    configTitle:SetText("ItemAnalysis")
+    configTitle:SetText("ItemInvestigator")
 
-    configCheckboxSpec = ItemAnalysis_CreateCheckbox(
+    configCheckboxSpec = ItemInvestigator_CreateCheckbox(
     	LocalText("ConfigSpecLabel"),
     	LocalText("ConfigSpecLabelTooltip"),
-    	function(self, value) ItemAnalysis_SetIncludeSpec(value) end)
+    	function(self, value) ItemInvestigator_SetIncludeSpec(value) end)
     configCheckboxSpec:SetPoint("TOPLEFT", configTitle, "BOTTOMLEFT", 0, -8)
 
-    configCheckboxRaid = ItemAnalysis_CreateCheckbox(
+    configCheckboxRaid = ItemInvestigator_CreateCheckbox(
     	LocalText("ConfigRaidsLabel"),
     	LocalText("ConfigRaidsLabelTooltip"),
-    	function(self, value) ItemAnalysis_SetIncludeRaids(value) end)
+    	function(self, value) ItemInvestigator_SetIncludeRaids(value) end)
     configCheckboxRaid:SetPoint("TOPLEFT", configCheckboxSpec, "BOTTOMLEFT", 0, -8)
 
-    configCheckboxRaidsInCombat = ItemAnalysis_CreateCheckbox(
+    configCheckboxRaidsInCombat = ItemInvestigator_CreateCheckbox(
     	LocalText("ConfigRaidsInCombatLabel"),
         LocalText("ConfigRaidsInCombatLabelTooptip"),
-    	function(self, value) ItemAnalysis_SetRaidsInCombat(value) end)
+    	function(self, value) ItemInvestigator_SetRaidsInCombat(value) end)
     configCheckboxRaidsInCombat:SetPoint("TOPLEFT", configCheckboxRaid, "BOTTOMLEFT", 24, -8)
 
-    configCheckboxGuild = ItemAnalysis_CreateCheckbox(
+    configCheckboxGuild = ItemInvestigator_CreateCheckbox(
     	LocalText("ConfigGuildLabel"),
         LocalText("ConfigGuildLabelTooltip"),
-    	function(self, value) ItemAnalysis_SetIncludeGuild(value) end)
+    	function(self, value) ItemInvestigator_SetIncludeGuild(value) end)
     configCheckboxGuild:SetPoint("TOPLEFT", configCheckboxRaidsInCombat, "BOTTOMLEFT", -24, -8)
 end
 
-function ItemAnalysis_RefreshConfigUI()
-	configCheckboxSpec:SetChecked(ItemAnalysisDB["include-spec"]);
-	configCheckboxRaid:SetChecked(ItemAnalysisDB["include-raids"]);
-	configCheckboxRaidsInCombat:SetChecked(ItemAnalysisDB["raids-in-combat"]);
-	configCheckboxGuild:SetChecked(ItemAnalysisDB["include-guild"]);
+function ItemInvestigator_RefreshConfigUI()
+	configCheckboxSpec:SetChecked(ItemInvestigatorDB["include-spec"]);
+	configCheckboxRaid:SetChecked(ItemInvestigatorDB["include-raids"]);
+	configCheckboxRaidsInCombat:SetChecked(ItemInvestigatorDB["raids-in-combat"]);
+	configCheckboxGuild:SetChecked(ItemInvestigatorDB["include-guild"]);
 end
 
 -----------------------
@@ -102,7 +102,7 @@ function LocalText(textItem)
 	end
 end
 
-function ItemAnalysis_AddLocale(locale, localeTable)
+function ItemInvestigator_AddLocale(locale, localeTable)
 	if(localizedText[locale] ~= nil) then
 		localizedText[locale] = nil;
 	end
@@ -113,12 +113,12 @@ end
 -- Tooltip Functions
 ----------------------
 
-function ItemAnalysis_GameTooltipActivated(self)
+function ItemInvestigator_GameTooltipActivated(self)
 	local name, unitid = self:GetUnit()
 	if(UnitIsPlayer(unitid) and enabled) then
-		local foundPlayers = ItemAnalysis_GetPlayerByName(name);
+		local foundPlayers = ItemInvestigator_GetPlayerByName(name);
 		
-		if(ItemAnalysis_tablelength(foundPlayers) == 0) then
+		if(ItemInvestigator_tablelength(foundPlayers) == 0) then
 			GameTooltip:AddLine(LocalText("StartAnalysis"), true);
 		else
 			local isNext = false;
@@ -127,13 +127,13 @@ function ItemAnalysis_GameTooltipActivated(self)
 					GameTooltip:AddLine("-----");
 				end
 				isNext = true;
-				ItemAnalysis_AppendPlayerToTooltip(player);
+				ItemInvestigator_AppendPlayerToTooltip(player);
 			end);
 		end
 	end
 end
 
-function ItemAnalysis_AppendPlayerToTooltip(foundPlayer)
+function ItemInvestigator_AppendPlayerToTooltip(foundPlayer)
 	for index,summaryItem in pairs(foundPlayer["summary"]) do
 		GameTooltip:AddLine(summaryItem["Text"]);
 	end
@@ -143,77 +143,77 @@ end
 -- General Functions
 ----------------------
 
-function ItemAnalysis_Enable()
-	ItemAnalysis_Frame:RegisterEvent("ADDON_LOADED");
-	ItemAnalysis_Frame:RegisterEvent("PLAYER_TARGET_CHANGED");
-	ItemAnalysis_Frame:RegisterEvent("PLAYER_REGEN_DISABLED");
-	ItemAnalysis_Frame:RegisterEvent("PLAYER_REGEN_ENABLED");
+function ItemInvestigator_Enable()
+	ItemInvestigator_Frame:RegisterEvent("ADDON_LOADED");
+	ItemInvestigator_Frame:RegisterEvent("PLAYER_TARGET_CHANGED");
+	ItemInvestigator_Frame:RegisterEvent("PLAYER_REGEN_DISABLED");
+	ItemInvestigator_Frame:RegisterEvent("PLAYER_REGEN_ENABLED");
 	enabled = true;
 end
 
-function ItemAnalysis_Disable()
-	ItemAnalysis_Frame:UnregisterEvent("ADDON_LOADED");
-	ItemAnalysis_Frame:UnregisterEvent("PLAYER_TARGET_CHANGED");
-	ItemAnalysis_Frame:UnregisterEvent("PLAYER_REGEN_DISABLED");
-	ItemAnalysis_Frame:UnregisterEvent("PLAYER_REGEN_ENABLED");
+function ItemInvestigator_Disable()
+	ItemInvestigator_Frame:UnregisterEvent("ADDON_LOADED");
+	ItemInvestigator_Frame:UnregisterEvent("PLAYER_TARGET_CHANGED");
+	ItemInvestigator_Frame:UnregisterEvent("PLAYER_REGEN_DISABLED");
+	ItemInvestigator_Frame:UnregisterEvent("PLAYER_REGEN_ENABLED");
 	enabled = false;
 end
 
-function ItemAnalysis_SetIncludeSpec(b)
-	ItemAnalysisDB["include-spec"] = b;
-    ItemAnalysis_InitializeDatabase();
-    ItemAnalysisDB["storedPlayers"] = {};
+function ItemInvestigator_SetIncludeSpec(b)
+	ItemInvestigatorDB["include-spec"] = b;
+    ItemInvestigator_InitializeDatabase();
+    ItemInvestigatorDB["storedPlayers"] = {};
 end
 
-function ItemAnalysis_SetIncludeRaids(b)
-	ItemAnalysisDB["include-raids"] = b;
-    ItemAnalysis_InitializeDatabase();
+function ItemInvestigator_SetIncludeRaids(b)
+	ItemInvestigatorDB["include-raids"] = b;
+    ItemInvestigator_InitializeDatabase();
 end
 
-function ItemAnalysis_SetRaidsInCombat(b)
-	ItemAnalysisDB["raids-in-combat"] = b;
+function ItemInvestigator_SetRaidsInCombat(b)
+	ItemInvestigatorDB["raids-in-combat"] = b;
 end
 
-function ItemAnalysis_SetIncludeGuild(b)
-	ItemAnalysisDB["include-guild"] = b;
-    ItemAnalysis_InitializeDatabase();
+function ItemInvestigator_SetIncludeGuild(b)
+	ItemInvestigatorDB["include-guild"] = b;
+    ItemInvestigator_InitializeDatabase();
 end
 
-function ItemAnalysis_Reset()
-	ItemAnalysisDB = nil;
-    ItemAnalysis_InitializeDatabase();
+function ItemInvestigator_Reset()
+	ItemInvestigatorDB = nil;
+    ItemInvestigator_InitializeDatabase();
 end
 
-function ItemAnalysis_CommandHandler(msg)
-	InterfaceOptionsFrame_OpenToCategory("ItemAnalysis");
-	InterfaceOptionsFrame_OpenToCategory("ItemAnalysis");
+function ItemInvestigator_CommandHandler(msg)
+	InterfaceOptionsFrame_OpenToCategory("ItemInvestigator");
+	InterfaceOptionsFrame_OpenToCategory("ItemInvestigator");
 end;
 
-function ItemAnalysis_InitializeAddon()
+function ItemInvestigator_InitializeAddon()
 	cultureCode = GetLocale();
 	
-	ItemAnalysis_Enable();
+	ItemInvestigator_Enable();
 end
 
-function ItemAnalysis_InitializeDatabase()
-	if(ItemAnalysisDB == nil or ItemAnalysisDB["version"] ~= currentVersion) then
-		local spec = (ItemAnalysisDB and ItemAnalysisDB["include-spec"]);
+function ItemInvestigator_InitializeDatabase()
+	if(ItemInvestigatorDB == nil or ItemInvestigatorDB["version"] ~= currentVersion) then
+		local spec = (ItemInvestigatorDB and ItemInvestigatorDB["include-spec"]);
 		if spec == nil then
 			spec = false
 		end
-		local raids = (ItemAnalysisDB and ItemAnalysisDB["include-raids"]);
+		local raids = (ItemInvestigatorDB and ItemInvestigatorDB["include-raids"]);
 		if raids == nil then
         	raids = true
         end
-        local raidsInCombat = (ItemAnalysisDB and ItemAnalysisDB["raids-in-combat"]);
+        local raidsInCombat = (ItemInvestigatorDB and ItemInvestigatorDB["raids-in-combat"]);
         if raidsInCombat == nil then
         	raidsInCombat = false
         end
-        local guild = (ItemAnalysisDB and ItemAnalysisDB["include-guild"]);
+        local guild = (ItemInvestigatorDB and ItemInvestigatorDB["include-guild"]);
         if guild == nil then
         	guild = false
         end
-		ItemAnalysisDB = {
+		ItemInvestigatorDB = {
 			["version"] = currentVersion,
 			["include-spec"] = spec,
 			["include-raids"] = raids,
@@ -225,35 +225,35 @@ function ItemAnalysis_InitializeDatabase()
 	end
 end
 
-function ItemAnalysis_InitializeLocalizationForAnalysis()
-	if(ItemAnalysisDB["localItemText"][cultureCode] == nil) then
-		ItemAnalysisDB["localItemText"][cultureCode] = {};
+function ItemInvestigator_InitializeLocalizationForAnalysis()
+	if(ItemInvestigatorDB["localItemText"][cultureCode] == nil) then
+		ItemInvestigatorDB["localItemText"][cultureCode] = {};
 		
-		ItemAnalysisDB["localItemText"][cultureCode]["Cloth"] = ItemAnalysis_GetItemSubClassStringForItem(55998);
-		ItemAnalysisDB["localItemText"][cultureCode]["Leather"] = ItemAnalysis_GetItemSubClassStringForItem(59335);
-		ItemAnalysisDB["localItemText"][cultureCode]["Mail"] = ItemAnalysis_GetItemSubClassStringForItem(63447);
-		ItemAnalysisDB["localItemText"][cultureCode]["Plate"] = ItemAnalysis_GetItemSubClassStringForItem(75128);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Cloth"] = ItemInvestigator_GetItemSubClassStringForItem(55998);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Leather"] = ItemInvestigator_GetItemSubClassStringForItem(59335);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Mail"] = ItemInvestigator_GetItemSubClassStringForItem(63447);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Plate"] = ItemInvestigator_GetItemSubClassStringForItem(75128);
 		
-		ItemAnalysisDB["localItemText"][cultureCode]["One-Handed Maces"] = ItemAnalysis_GetItemSubClassStringForItem(56130);
-		ItemAnalysisDB["localItemText"][cultureCode]["Two-Handed Maces"] = ItemAnalysis_GetItemSubClassStringForItem(56131);
-		ItemAnalysisDB["localItemText"][cultureCode]["One-Handed Swords"] = ItemAnalysis_GetItemSubClassStringForItem(56101);
-		ItemAnalysisDB["localItemText"][cultureCode]["Two-Handed Swords"] = ItemAnalysis_GetItemSubClassStringForItem(63787);
-		ItemAnalysisDB["localItemText"][cultureCode]["One-Handed Axes"] = ItemAnalysis_GetItemSubClassStringForItem(63788);
-		ItemAnalysisDB["localItemText"][cultureCode]["Two-Handed Axes"] = ItemAnalysis_GetItemSubClassStringForItem(56284);
-		ItemAnalysisDB["localItemText"][cultureCode]["Daggers"] = ItemAnalysis_GetItemSubClassStringForItem(63792);
-		ItemAnalysisDB["localItemText"][cultureCode]["Fist Weapons"] = ItemAnalysis_GetItemSubClassStringForItem(52493);
-		ItemAnalysisDB["localItemText"][cultureCode]["Bows"] = ItemAnalysis_GetItemSubClassStringForItem(78480);
-		ItemAnalysisDB["localItemText"][cultureCode]["Guns"] = ItemAnalysis_GetItemSubClassStringForItem(60210);
-		ItemAnalysisDB["localItemText"][cultureCode]["Crossbows"] = ItemAnalysis_GetItemSubClassStringForItem(59598);
+		ItemInvestigatorDB["localItemText"][cultureCode]["One-Handed Maces"] = ItemInvestigator_GetItemSubClassStringForItem(56130);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Two-Handed Maces"] = ItemInvestigator_GetItemSubClassStringForItem(56131);
+		ItemInvestigatorDB["localItemText"][cultureCode]["One-Handed Swords"] = ItemInvestigator_GetItemSubClassStringForItem(56101);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Two-Handed Swords"] = ItemInvestigator_GetItemSubClassStringForItem(63787);
+		ItemInvestigatorDB["localItemText"][cultureCode]["One-Handed Axes"] = ItemInvestigator_GetItemSubClassStringForItem(63788);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Two-Handed Axes"] = ItemInvestigator_GetItemSubClassStringForItem(56284);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Daggers"] = ItemInvestigator_GetItemSubClassStringForItem(63792);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Fist Weapons"] = ItemInvestigator_GetItemSubClassStringForItem(52493);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Bows"] = ItemInvestigator_GetItemSubClassStringForItem(78480);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Guns"] = ItemInvestigator_GetItemSubClassStringForItem(60210);
+		ItemInvestigatorDB["localItemText"][cultureCode]["Crossbows"] = ItemInvestigator_GetItemSubClassStringForItem(59598);
 		
 		if(debugMode) then
-			for index,text in pairs(ItemAnalysisDB["localItemText"][cultureCode]) do 
+			for index,text in pairs(ItemInvestigatorDB["localItemText"][cultureCode]) do 
 				print(index .. " = " .. text);
 			end 
 		end
 		
-		if(ItemAnalysis_tablelength(ItemAnalysisDB["localItemText"][cultureCode]) ~= 15) then
-			ItemAnalysisDB["localItemText"][cultureCode] = nil;
+		if(ItemInvestigator_tablelength(ItemInvestigatorDB["localItemText"][cultureCode]) ~= 15) then
+			ItemInvestigatorDB["localItemText"][cultureCode] = nil;
 			return false;
 		end
 	end
@@ -261,12 +261,12 @@ function ItemAnalysis_InitializeLocalizationForAnalysis()
 	return true;
 end
 
-function ItemAnalysis_GetItemSubClassStringForItem(itemId)
+function ItemInvestigator_GetItemSubClassStringForItem(itemId)
 	local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemId);
 	return itemSubclass;
 end
 
-function ItemAnalysis_tablelength(T)
+function ItemInvestigator_tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
   return count
@@ -277,7 +277,7 @@ end
 -- Scanning Functions
 -----------------------
 
-function ItemAnalysis_CanInspectTarget()
+function ItemInvestigator_CanInspectTarget()
 	local hours, minutes = GetGameTime();
 
 	if addonLoaded == true and (inspectReady or difftime(time(), lastInspect) > 30) and (CanInspect("target")) and (UnitIsPlayer("target")) then
@@ -287,14 +287,14 @@ function ItemAnalysis_CanInspectTarget()
 	return false;
 end
 
-function ItemAnalysis_InspectTarget()
-	if(ItemAnalysis_InitializeLocalizationForAnalysis()) then
+function ItemInvestigator_InspectTarget()
+	if(ItemInvestigator_InitializeLocalizationForAnalysis()) then
 		lastInspect = time();
 		inspectReady = false;
 		inspectAchievementsReady = false;
-		ItemAnalysis_Frame:RegisterEvent("INSPECT_READY");
-		ItemAnalysis_Frame:RegisterEvent("INSPECT_ACHIEVEMENT_READY");
-		if ItemAnalysisDB["include-raids"] and (ItemAnalysisDB["raids-in-combat"] or not inCombat or UnitIsDeadOrGhost("player")) then
+		ItemInvestigator_Frame:RegisterEvent("INSPECT_READY");
+		ItemInvestigator_Frame:RegisterEvent("INSPECT_ACHIEVEMENT_READY");
+		if ItemInvestigatorDB["include-raids"] and (ItemInvestigatorDB["raids-in-combat"] or not inCombat or UnitIsDeadOrGhost("player")) then
 			if AchievementFrameComparison and AchievementFrameComparison:IsShown() then
 				AchievementFrame:Hide();
 			end
@@ -310,15 +310,15 @@ function ItemAnalysis_InspectTarget()
 	end
 end
 
-function ItemAnalysis_InspectRaidProgress(player)
+function ItemInvestigator_InspectRaidProgress(player)
     if inspectAchievementsReady then
         local HFC_Normal = {10202, 10206, 10210, 10214, 10218, 10222, 10226, 10230, 10234, 10238, 10242, 10246, 10250};
         local HFC_Heroic = {10203, 10207, 10211, 10215, 10219, 10223, 10227, 10231, 10235, 10239, 10243, 10247, 10251};
         local HFC_Mythic = {10204, 10208, 10212, 10216, 10220, 10224, 10228, 10232, 10236, 10240, 10244, 10248, 10252};
 
-        player["progress"]["HFC N"] = ItemAnalysis_CountProgress(HFC_Normal);
-        player["progress"]["HFC H"] = ItemAnalysis_CountProgress(HFC_Heroic);
-        player["progress"]["HFC M"] = ItemAnalysis_CountProgress(HFC_Mythic);
+        player["progress"]["HFC N"] = ItemInvestigator_CountProgress(HFC_Normal);
+        player["progress"]["HFC H"] = ItemInvestigator_CountProgress(HFC_Heroic);
+        player["progress"]["HFC M"] = ItemInvestigator_CountProgress(HFC_Mythic);
         player["progress"]["HFC Curve"] = GetAchievementComparisonInfo(10044);
         player["progress"]["HFC Edge"] = GetAchievementComparisonInfo(10045);
 
@@ -342,7 +342,7 @@ function GetRealItemLevel(itemLink)
 	end				
 end
 
-function ItemAnalysis_ScanTarget()
+function ItemInvestigator_ScanTarget()
 	local playerName = UnitName("target");
 	local class, classFileName = UnitClass("target");
 	local guildName, guildRankName, guildRankIndex = GetGuildInfo("target");
@@ -350,8 +350,8 @@ function ItemAnalysis_ScanTarget()
 	local locRace, engRace = UnitRace("target");
 	local currectSpec = GetInspectSpecialization("target");
 	local specId, specName, specDescription, specIcon, specBackground, specRole, specClass = GetSpecializationInfoByID(currectSpec);
-	local foundPlayerIndex = ItemAnalysis_GetOrCreatePlayer(playerName, specId);
-	local storedPlayer = ItemAnalysisDB["storedPlayers"][foundPlayerIndex];
+	local foundPlayerIndex = ItemInvestigator_GetOrCreatePlayer(playerName, specId);
+	local storedPlayer = ItemInvestigatorDB["storedPlayers"][foundPlayerIndex];
 	
 	storedPlayer["race"] = engRace;
 	storedPlayer["level"] = level;
@@ -410,26 +410,26 @@ function ItemAnalysis_ScanTarget()
 			storedPlayer["gear"][slotName]["gems"] = {Gem1, Gem2, Gem3, Gem4};
 			storedPlayer["gear"][slotName]["upgrade"] = Upgrade;
 			storedPlayer["gear"][slotName]["stats"] = stats;
-			storedPlayer["gear"][slotName]["emptySockets"] = ItemAnalysis_CountEmptySockets(itemLink);
+			storedPlayer["gear"][slotName]["emptySockets"] = ItemInvestigator_CountEmptySockets(itemLink);
 			
 			itemsScanned = itemsScanned + 1;
 		end
 	end
 
-	ItemAnalysis_InspectRaidProgress(storedPlayer);
+	ItemInvestigator_InspectRaidProgress(storedPlayer);
 	
 
-	ItemAnalysis_ReleaseInspectData();
+	ItemInvestigator_ReleaseInspectData();
 	
-	if(ItemAnalysis_IsDualWielding(storedPlayer) == false) then totalItems = totalItems -1; end
-	if retryedInspect == false and (itemsScanned / totalItems) < 0.75 and ItemAnalysis_CanInspectTarget() then
+	if(ItemInvestigator_IsDualWielding(storedPlayer) == false) then totalItems = totalItems -1; end
+	if retryedInspect == false and (itemsScanned / totalItems) < 0.75 and ItemInvestigator_CanInspectTarget() then
 		
 		if(debugMode) then
 			print("Retrying... " .. itemsScanned .. "/" .. totalItems);
 		end
 		
 		retryedInspect = true;
-		ItemAnalysis_InspectTarget();
+		ItemInvestigator_InspectTarget();
 	else
 		
 		if(debugMode) then
@@ -441,7 +441,7 @@ function ItemAnalysis_ScanTarget()
 		storedPlayer["equipedItems"] = itemsScanned;
 		storedPlayer["slotsForItems"] = totalItems;
 		
-		ItemAnalysis_CalculatePlayer(storedPlayer);
+		ItemInvestigator_CalculatePlayer(storedPlayer);
 		
 		if(debugMode) then
 			for index,gearTable in pairs(storedPlayer["gear"]) do 
@@ -455,8 +455,8 @@ function ItemAnalysis_ScanTarget()
 		end
 		
 		if(itemsScanned > 0) then
-			ItemAnalysis_AnalyzePlayer(storedPlayer);
-			ItemAnalysis_ReinsertPlayerOnTop(foundPlayerIndex, storedPlayer);
+			ItemInvestigator_AnalyzePlayer(storedPlayer);
+			ItemInvestigator_ReinsertPlayerOnTop(foundPlayerIndex, storedPlayer);
 		end
 		
 		GameTooltip:SetUnit("target");
@@ -464,7 +464,7 @@ function ItemAnalysis_ScanTarget()
 	end;
 end
 
-function ItemAnalysis_IsDualWielding(player)
+function ItemInvestigator_IsDualWielding(player)
 	if player["specId"] == 72 then
 		return true;
 	else
@@ -478,7 +478,7 @@ function ItemAnalysis_IsDualWielding(player)
 	end
 end
 
-function ItemAnalysis_CountEmptySockets(itemLink)
+function ItemInvestigator_CountEmptySockets(itemLink)
 	local count = 0;
 
 	for textureCount = 1, 10 do
@@ -514,7 +514,7 @@ function ItemAnalysis_CountEmptySockets(itemLink)
 	return count;
 end;
 
-function ItemAnalysis_ReleaseInspectData()
+function ItemInvestigator_ReleaseInspectData()
 	inspectReady = true;
  	ClearInspectPlayer();
 end
@@ -523,18 +523,18 @@ end
 -- Player Functions
 -----------------------
 
-function ItemAnalysis_GetOrCreatePlayer(name, specId)
-	local foundPlayerIndex = ItemAnalysis_GetPlayer(name, specId);	
+function ItemInvestigator_GetOrCreatePlayer(name, specId)
+	local foundPlayerIndex = ItemInvestigator_GetPlayer(name, specId);	
 	if (foundPlayerIndex == nil) then
-		foundPlayerIndex = ItemAnalysis_CreatePlayer(name, specId);
+		foundPlayerIndex = ItemInvestigator_CreatePlayer(name, specId);
 	end
 	
 	return foundPlayerIndex;
 end
 
-function ItemAnalysis_GetPlayerByName(name)
+function ItemInvestigator_GetPlayerByName(name)
 	local foundPlayers = {};
-	table.foreach(ItemAnalysisDB["storedPlayers"], function(index, player)
+	table.foreach(ItemInvestigatorDB["storedPlayers"], function(index, player)
 		if(player["name"] == name) then
 			table.insert(foundPlayers, player);
 		end
@@ -543,10 +543,10 @@ function ItemAnalysis_GetPlayerByName(name)
 	return foundPlayers;
 end
 
-function ItemAnalysis_GetPlayer(name, specId)
+function ItemInvestigator_GetPlayer(name, specId)
 	local foundPlayerIndex = nil;
-	table.foreach(ItemAnalysisDB["storedPlayers"], function(index, player)
-		if(player["name"] == name and (not ItemAnalysisDB["include-spec"] or player["specId"] == specId)) then
+	table.foreach(ItemInvestigatorDB["storedPlayers"], function(index, player)
+		if(player["name"] == name and (not ItemInvestigatorDB["include-spec"] or player["specId"] == specId)) then
 			foundPlayerIndex = index;
 		end
 	end);
@@ -554,38 +554,38 @@ function ItemAnalysis_GetPlayer(name, specId)
 	return foundPlayerIndex;
 end
 
-function ItemAnalysis_CreatePlayer(name, specId)
-	table.insert(ItemAnalysisDB["storedPlayers"], 1, 
+function ItemInvestigator_CreatePlayer(name, specId)
+	table.insert(ItemInvestigatorDB["storedPlayers"], 1, 
 	{
 		scannedAt = nil,
 		name = name,
 		specId = specId
 	});
 	
-	if(getn(ItemAnalysisDB["storedPlayers"]) > playerCacheSize) then
-		table.remove(ItemAnalysisDB["storedPlayers"]);
+	if(getn(ItemInvestigatorDB["storedPlayers"]) > playerCacheSize) then
+		table.remove(ItemInvestigatorDB["storedPlayers"]);
 	end
 	
-	return ItemAnalysis_GetPlayer(name, specId);
+	return ItemInvestigator_GetPlayer(name, specId);
 end
 
-function ItemAnalysis_ReinsertPlayerOnTop(index, player)
-	table.remove(ItemAnalysisDB["storedPlayers"],index)
-	table.insert(ItemAnalysisDB["storedPlayers"],1,player);
+function ItemInvestigator_ReinsertPlayerOnTop(index, player)
+	table.remove(ItemInvestigatorDB["storedPlayers"],index)
+	table.insert(ItemInvestigatorDB["storedPlayers"],1,player);
 end
 
 -----------------------
 -- Analysis Functions
 -----------------------
 
-function ItemAnalysis_CalculatePlayer(player)
-	--ItemAnalysis_CalculateUpgradedStats(player);
-	ItemAnalysis_CalculateEnchantedStats(player);
-	ItemAnalysis_CalculateGemedStats(player);
-	ItemAnalysis_CalculateTotalStat(player);
+function ItemInvestigator_CalculatePlayer(player)
+	--ItemInvestigator_CalculateUpgradedStats(player);
+	ItemInvestigator_CalculateEnchantedStats(player);
+	ItemInvestigator_CalculateGemedStats(player);
+	ItemInvestigator_CalculateTotalStat(player);
 end
 
-function ItemAnalysis_CalculateUpgradedStats(player)
+function ItemInvestigator_CalculateUpgradedStats(player)
 	for index,gearTable in pairs(player["gear"]) do
 		local bilzardFactor = 1.14; --1.06035 (5.1) upped it a bit to compensate ;
 		local upgradeLevel = upgradeLevels[gearTable["upgrade"]] or -1;
@@ -597,7 +597,7 @@ function ItemAnalysis_CalculateUpgradedStats(player)
 		
 		if (upgradeLevel ~= 0) then
 			for stat, value in pairs(gearTable["stats"]) do
-				if value > 0 and (ItemAnalysis_IsPrimaryStat(stat) or ItemAnalysis_IsSecondaryStat(stat)) then
+				if value > 0 and (ItemInvestigator_IsPrimaryStat(stat) or ItemInvestigator_IsSecondaryStat(stat)) then
 					gearTable["stats"][stat] = math.floor(value * upgradePercentage * bilzardFactor);
 				end
 			end
@@ -605,7 +605,7 @@ function ItemAnalysis_CalculateUpgradedStats(player)
 	end
 end
 
-function ItemAnalysis_CalculateEnchantedStats(player)
+function ItemInvestigator_CalculateEnchantedStats(player)
 	for index,gearTable in pairs(player["gear"]) do
 		local enchantId = gearTable["enchant"]
 		if (enchantId ~= "0") then
@@ -627,7 +627,7 @@ function ItemAnalysis_CalculateEnchantedStats(player)
 	end
 end
 
-function ItemAnalysis_CalculateGemedStats(player)
+function ItemInvestigator_CalculateGemedStats(player)
 	for index,gearTable in pairs(player["gear"]) do
 		for index2,gemId in pairs(gearTable["gems"]) do
 			if (gemId ~= "0") then
@@ -650,12 +650,12 @@ function ItemAnalysis_CalculateGemedStats(player)
 	end
 end
 
-function ItemAnalysis_CalculateTotalStat(player)
+function ItemInvestigator_CalculateTotalStat(player)
 	for index,gearTable in pairs(player["gear"]) do
 		if gearTable["stats"] ~= nil then
 			for stat, value in pairs(gearTable["stats"]) do
 				if value > 0 then
-					if not ItemAnalysis_CanHaveBonusArmor(index) and stat == "RESISTANCE0_NAME" then
+					if not ItemInvestigator_CanHaveBonusArmor(index) and stat == "RESISTANCE0_NAME" then
 					else
 						local ilvl = gearTable["ilvl"] + (upgradeLevels[gearTable["upgrade"]] or 0)
 						if ilvl < 500 and index == "BackSlot" and stat == "RESISTANCE0_NAME" then
@@ -705,7 +705,7 @@ end
 -- Analysis Functions
 -----------------------
 
-function ItemAnalysis_AnalyzePlayer(player)
+function ItemInvestigator_AnalyzePlayer(player)
     local minutesDiff = math.floor((difftime (time(), player["scannedAt"]) / 60)+0.5);
 
     if(minutesDiff < 60) then
@@ -716,7 +716,7 @@ function ItemAnalysis_AnalyzePlayer(player)
         table.insert(player["summary"], summaryItem);
     end
 
-    if ItemAnalysisDB["include-guild"] and player["guildRankName"] then
+    if ItemInvestigatorDB["include-guild"] and player["guildRankName"] then
         local summaryItem = {Item = "guildRank", Text = string.format(LocalText("Rank"), player["guildRankName"], player["guildRankIndex"]), Value = player["guildRankName"]};
         table.insert(player["summary"], summaryItem);
     end
@@ -726,62 +726,62 @@ function ItemAnalysis_AnalyzePlayer(player)
         table.insert(player["summary"], summaryItem);
     end
 
-	ItemAnalysis_CheckStatPrio(player, 4);
+	ItemInvestigator_CheckStatPrio(player, 4);
 	
-	ItemAnalysis_CalculateAverageItemLevel(player);
-	ItemAnalysis_AddProgress(player);
+	ItemInvestigator_CalculateAverageItemLevel(player);
+	ItemInvestigator_AddProgress(player);
 
-	ItemAnalysis_CheckMissingOrNotScannedItems(player);
-	ItemAnalysis_CheckForUpgrades(player);
-	ItemAnalysis_CheckForPvPItems(player);
+	ItemInvestigator_CheckMissingOrNotScannedItems(player);
+	ItemInvestigator_CheckForUpgrades(player);
+	ItemInvestigator_CheckForPvPItems(player);
 	
-	ItemAnalysis_CheckForMissingEnchants(player);
-	ItemAnalysis_CheckForMissingGems(player);
+	ItemInvestigator_CheckForMissingEnchants(player);
+	ItemInvestigator_CheckForMissingGems(player);
 
-	ItemAnalysis_CheckForArmorSpecialization(player);
-	ItemAnalysis_CheckWrongStatsForSpec(player);
+	ItemInvestigator_CheckForArmorSpecialization(player);
+	ItemInvestigator_CheckWrongStatsForSpec(player);
 	
-	ItemAnalysis_GetLegendaryRingUpgrade(player);
+	ItemInvestigator_GetLegendaryRingUpgrade(player);
 	
-	--if(ItemAnalysis_IsAHealer(player)) then
-	--	ItemAnalysis_AddEmptyLine(player);
-	--	ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_SPIRIT_SHORT");
+	--if(ItemInvestigator_IsAHealer(player)) then
+	--	ItemInvestigator_AddEmptyLine(player);
+	--	ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_SPIRIT_SHORT");
 	--end
 	
-	--if(ItemAnalysis_IsATank(player)) then
-	--	ItemAnalysis_AddEmptyLine(player);
-	--	ItemAnalysis_CheckTotalStat(player, "RESISTANCE0_NAME");
-	--	ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_MASTERY_RATING_SHORT");
+	--if(ItemInvestigator_IsATank(player)) then
+	--	ItemInvestigator_AddEmptyLine(player);
+	--	ItemInvestigator_CheckTotalStat(player, "RESISTANCE0_NAME");
+	--	ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_MASTERY_RATING_SHORT");
 	--end
 	
 	--Show primary stat totals
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_STRENGTH_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_AGILITY_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_INTELLECT_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_STAMINA_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_STRENGTH_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_AGILITY_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_INTELLECT_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_STAMINA_SHORT");
 	
 	--Show secondary stat totals
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_SPIRIT_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_DODGE_RATING_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_PARRY_RATING_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_CRIT_RATING_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_HASTE_RATING_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_MASTERY_RATING_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_SPELL_POWER_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_ATTACK_POWER_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "RESISTANCE0_NAME");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_SPIRIT_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_DODGE_RATING_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_PARRY_RATING_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_CRIT_RATING_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_HASTE_RATING_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_MASTERY_RATING_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_SPELL_POWER_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_ATTACK_POWER_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "RESISTANCE0_NAME");
 	
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_CR_MULTISTRIKE_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_CR_LIFESTEAL_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_VERSATILITY");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_CR_AVOIDANCE_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_CR_MULTISTRIKE_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_CR_LIFESTEAL_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_VERSATILITY");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_CR_AVOIDANCE_SHORT");
 	
 	--Weapon Damage
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_DAMAGE_PER_SECOND_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_DAMAGE_PER_SECOND_SHORT");
 	
 	--PvP Stats
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_RESILIENCE_RATING_SHORT");
-	--ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_PVP_POWER_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_RESILIENCE_RATING_SHORT");
+	--ItemInvestigator_CheckTotalStat(player, "ITEM_MOD_PVP_POWER_SHORT");
 	
 	---if(debugMode) then
 	--	for index,summaryItem in pairs(player["summary"]) do
@@ -790,7 +790,7 @@ function ItemAnalysis_AnalyzePlayer(player)
 	--end
 end
 
-function ItemAnalysis_CheckStatPrio(player, amount)
+function ItemInvestigator_CheckStatPrio(player, amount)
 	
 	local topStats = {};
 	local topStatText = "";
@@ -799,7 +799,7 @@ function ItemAnalysis_CheckStatPrio(player, amount)
 		local highestStat = "";
 		local highestValue = 0;
 		for stat,value in pairs(player["totalStats"]) do 
-			if (topStats[stat] == nil and ItemAnalysis_IsSecondaryStat(stat) and value > highestValue) then
+			if (topStats[stat] == nil and ItemInvestigator_IsSecondaryStat(stat) and value > highestValue) then
 				highestStat = stat;
 				highestValue = value
 			end
@@ -818,7 +818,7 @@ function ItemAnalysis_CheckStatPrio(player, amount)
 	table.insert(player["summary"], summaryItem);
 end
 
-function ItemAnalysis_CalculateAverageItemLevel(player)
+function ItemInvestigator_CalculateAverageItemLevel(player)
 	local totalItemLevel = 0;
 	for index,gearTable in pairs(player["gear"]) do
 		totalItemLevel = totalItemLevel + gearTable["ilvl"] + (upgradeLevels[gearTable["upgrade"]] or 0);
@@ -831,7 +831,7 @@ function ItemAnalysis_CalculateAverageItemLevel(player)
 	table.insert(player["summary"], summaryItem);
 end
 
-function ItemAnalysis_FormatProgress(n,h,m,c,e)
+function ItemInvestigator_FormatProgress(n,h,m,c,e)
     if n and h and m then
         local progressString = "";
         for i = 1, #n do
@@ -853,12 +853,12 @@ function ItemAnalysis_FormatProgress(n,h,m,c,e)
         end
 
         return progressString;
-    elseif ItemAnalysisDB["include-raids"] then
+    elseif ItemInvestigatorDB["include-raids"] then
         return LocalText("NA")
     end
 end
 
-function ItemAnalysis_GetLegendaryRingUpgrade(player)
+function ItemInvestigator_GetLegendaryRingUpgrade(player)
 	local ring1iLvL = 0;
 	local ring2iLvL = 0;
 	local ringiLvL = 0;
@@ -885,21 +885,21 @@ function ItemAnalysis_GetLegendaryRingUpgrade(player)
 	end
 end
 
-function ItemAnalysis_AddProgress(player)
+function ItemInvestigator_AddProgress(player)
     local n = player["progress"]["HFC N"];
     local h = player["progress"]["HFC H"];
     local m = player["progress"]["HFC M"];
     local c = player["progress"]["HFC Curve"];
     local e = player["progress"]["HFC Edge"];
 
-    local progress = ItemAnalysis_FormatProgress(n, h, m, c, e);
+    local progress = ItemInvestigator_FormatProgress(n, h, m, c, e);
     if progress then
 		local summaryItem = {Item = "ProgressHFC", Text = string.format(LocalText("ProgressHFC"), progress), Value = progress};
 		table.insert(player["summary"], summaryItem);
 	end
 end
 
-function ItemAnalysis_CheckForUpgrades(player)
+function ItemInvestigator_CheckForUpgrades(player)
 	local upgradedItems = 0;
 	for index,gearTable in pairs(player["gear"]) do
 		if((upgradeLevels[gearTable["upgrade"]] or 0) > 0) then
@@ -913,7 +913,7 @@ function ItemAnalysis_CheckForUpgrades(player)
 	end
 end
 
-function ItemAnalysis_CheckMissingOrNotScannedItems(player)
+function ItemInvestigator_CheckMissingOrNotScannedItems(player)
 	local missingOrNotScannedItems = player["slotsForItems"] - player["equipedItems"];
 	if (missingOrNotScannedItems > 0) then
 		local summaryItem = {Item = "missingItems", Text = "|cffff00ff" .. LocalText("IncompleteScan"), Value = missingOrNotScannedItems};
@@ -921,7 +921,7 @@ function ItemAnalysis_CheckMissingOrNotScannedItems(player)
 	end
 end
 
-function ItemAnalysis_CheckForMissingEnchants(player)
+function ItemInvestigator_CheckForMissingEnchants(player)
 	local totalMissingEnchants = 0;
 	for index,gearTable in pairs(player["gear"]) do
 		-- print(gearTable["link"] .. " = " .. gearTable["enchant"])
@@ -942,7 +942,7 @@ function ItemAnalysis_CheckForMissingEnchants(player)
 	end
 end
 
-function ItemAnalysis_CheckForMissingGems(player)
+function ItemInvestigator_CheckForMissingGems(player)
 	local totalEmptySockets = 0;
 	for index,gearTable in pairs(player["gear"]) do
 		totalEmptySockets = totalEmptySockets + gearTable["emptySockets"];
@@ -954,7 +954,7 @@ function ItemAnalysis_CheckForMissingGems(player)
 	end
 end
 
-function ItemAnalysis_CheckForPvPItems(player)
+function ItemInvestigator_CheckForPvPItems(player)
 	local totalPvPItems = 0;
 	for index,gearTable in pairs(player["gear"]) do
 		if gearTable["stats"]["ITEM_MOD_PVP_POWER_SHORT"] and gearTable["stats"]["ITEM_MOD_PVP_POWER_SHORT"] > 0 then
@@ -968,14 +968,14 @@ function ItemAnalysis_CheckForPvPItems(player)
 	end
 end
 
-function ItemAnalysis_CheckTotalStat(player, stat)
+function ItemInvestigator_CheckTotalStat(player, stat)
 	local summaryItem = {Item = "totalStat_" .. stat, Text = string.format(LocalText("StatsFromGear"), (player["totalStats"][stat] or 0 ), _G[stat]), Value = player["totalStats"][stat]};
 	table.insert(player["summary"], summaryItem);
 end
 
-function ItemAnalysis_CheckForArmorSpecialization(player)
+function ItemInvestigator_CheckForArmorSpecialization(player)
 	local armorSpecBonus = true;
-	local armorSpecBonusType = ItemAnalysis_GetArmorSpecBonusType(player);
+	local armorSpecBonusType = ItemInvestigator_GetArmorSpecBonusType(player);
 	for index,slotName in pairs(allItemSlots) do
 		if (slotName ~= "NeckSlot" and 
 			slotName ~= "BackSlot" and 
@@ -998,7 +998,7 @@ function ItemAnalysis_CheckForArmorSpecialization(player)
 	end
 end
 
-function ItemAnalysis_CheckWrongStatsForSpec(player)
+function ItemInvestigator_CheckWrongStatsForSpec(player)
 	if(player["specId"] ~= nil) then
 		local wrongStatsTable = nil
 		for specs,statsTable in pairs(wrongStatsForSpec) do
@@ -1030,7 +1030,7 @@ function ItemAnalysis_CheckWrongStatsForSpec(player)
 	end
 end
 
-function ItemAnalysis_CountProgress(stats)
+function ItemInvestigator_CountProgress(stats)
     local progress = {}
     for i, id in pairs(stats) do
     	if GetComparisonStatistic(id) == "--" then
@@ -1042,7 +1042,7 @@ function ItemAnalysis_CountProgress(stats)
     return progress;
 end
 
-function ItemAnalysis_IsATank(player)
+function ItemInvestigator_IsATank(player)
 	local spec = player["specId"];
 	
 	if (spec == 104 or 
@@ -1057,7 +1057,7 @@ function ItemAnalysis_IsATank(player)
 	return false;
 end
 
-function ItemAnalysis_IsAMeleeDPS(player)
+function ItemInvestigator_IsAMeleeDPS(player)
 	local class = player["class"];
 	local spec = player["specId"];
 	
@@ -1078,7 +1078,7 @@ function ItemAnalysis_IsAMeleeDPS(player)
 	return false;
 end
 
-function ItemAnalysis_IsACasterDPS(player)
+function ItemInvestigator_IsACasterDPS(player)
 	local class = player["class"];
 	local spec = player["specId"];
 	
@@ -1094,7 +1094,7 @@ function ItemAnalysis_IsACasterDPS(player)
 	return false;
 end
 
-function ItemAnalysis_IsAHealer(player)
+function ItemInvestigator_IsAHealer(player)
 	local spec = player["specId"];
 	
 	if (spec == 257 or 
@@ -1110,7 +1110,7 @@ function ItemAnalysis_IsAHealer(player)
 	return false;
 end
 
-function ItemAnalysis_IsPrimaryStat(stat)
+function ItemInvestigator_IsPrimaryStat(stat)
 	if(	stat == "ITEM_MOD_STRENGTH_SHORT" or
 		stat == "ITEM_MOD_AGILITY_SHORT" or
 		stat == "ITEM_MOD_INTELLECT_SHORT") then
@@ -1120,7 +1120,7 @@ function ItemAnalysis_IsPrimaryStat(stat)
 	return false;
 end
 
-function ItemAnalysis_IsSecondaryStat(stat)
+function ItemInvestigator_IsSecondaryStat(stat)
 	if(	stat == "ITEM_MOD_SPIRIT_SHORT" or
 		stat == "ITEM_MOD_CRIT_RATING_SHORT" or
 		stat == "ITEM_MOD_HASTE_RATING_SHORT" or
@@ -1134,7 +1134,7 @@ function ItemAnalysis_IsSecondaryStat(stat)
 	return false;
 end
 
-function ItemAnalysis_CanHaveBonusArmor(slot)
+function ItemInvestigator_CanHaveBonusArmor(slot)
 	if(	slot == "NeckSlot" or
 		slot == "BackSlot" or
 		slot == "Finger0Slot" or
@@ -1147,18 +1147,18 @@ function ItemAnalysis_CanHaveBonusArmor(slot)
 	return false;
 end
 
-function ItemAnalysis_GetArmorSpecBonusType(player)
+function ItemInvestigator_GetArmorSpecBonusType(player)
 	if(player["class"] == "WARRIOR" or player["class"] == "PALADIN" or player["class"] == "DEATHKNIGHT") then
-		return ItemAnalysisDB["localItemText"][cultureCode]["Plate"];
+		return ItemInvestigatorDB["localItemText"][cultureCode]["Plate"];
 	end
 	if(player["class"] == "SHAMAN" or player["class"] == "HUNTER") then
-		return ItemAnalysisDB["localItemText"][cultureCode]["Mail"];
+		return ItemInvestigatorDB["localItemText"][cultureCode]["Mail"];
 	end
 	if(player["class"] == "ROGUE" or player["class"] == "DRUID" or player["class"] == "MONK") then
-		return ItemAnalysisDB["localItemText"][cultureCode]["Leather"];
+		return ItemInvestigatorDB["localItemText"][cultureCode]["Leather"];
 	end
 	if(player["class"] == "MAGE" or player["class"] == "WARLOCK" or player["class"] == "PRIEST") then
-		return ItemAnalysisDB["localItemText"][cultureCode]["Cloth"];
+		return ItemInvestigatorDB["localItemText"][cultureCode]["Cloth"];
 	end
 end
 
@@ -1166,37 +1166,37 @@ end
 --External Data Loaders
 -----------------------
 
-function ItemAnalysis_AddEmptyLine(player)
+function ItemInvestigator_AddEmptyLine(player)
 	local dummyItem = {Item = "dummy", Text = " ", Value = ""};
 	table.insert(player["summary"], dummyItem);
 end
 
-function ItemAnalysis_LoadEffectStats(dataTable)
+function ItemInvestigator_LoadEffectStats(dataTable)
 	effectStats = nil;
 	effectStats = dataTable;
 end
 
-function ItemAnalysis_LoadWrongStatsForSpec(dataTable)
+function ItemInvestigator_LoadWrongStatsForSpec(dataTable)
 	wrongStatsForSpec = nil;
 	wrongStatsForSpec = dataTable;
 end
 
-function ItemAnalysis_LoadFivePercentStatsBonus(dataTable)
+function ItemInvestigator_LoadFivePercentStatsBonus(dataTable)
 	fivePercentStatsBonus = nil;
 	fivePercentStatsBonus = dataTable;
 end
 
-function ItemAnalysis_LoadAllItemSlots(dataTable)
+function ItemInvestigator_LoadAllItemSlots(dataTable)
 	allItemSlots = nil;
 	allItemSlots = dataTable;
 end
 
-function ItemAnalysis_LoadUpgradeLevels(dataTable)
+function ItemInvestigator_LoadUpgradeLevels(dataTable)
 	upgradeLevels = nil;
 	upgradeLevels = dataTable;
 end
 
-function ItemAnalysis_LoadCloakArmor(dataTable)
+function ItemInvestigator_LoadCloakArmor(dataTable)
 	cloakArmor = nil;
 	cloakArmor = dataTable;
 end
@@ -1204,37 +1204,37 @@ end
 -----------------------
 --Event Handlers
 -----------------------
-function ItemAnalysis_OnEvent(self, event, ...)
+function ItemInvestigator_OnEvent(self, event, ...)
 	events[event](self, ...);
 end
 
 function events:ADDON_LOADED(arg0, ...)
-	if(string.lower(arg0) == string.lower("ItemAnalysis")) then
+	if(string.lower(arg0) == string.lower("ItemInvestigator")) then
 		addonLoaded = true;
-		ItemAnalysis_InitializeDatabase();
-		ItemAnalysis_InitializeLocalizationForAnalysis();
+		ItemInvestigator_InitializeDatabase();
+		ItemInvestigator_InitializeLocalizationForAnalysis();
 
-		ItemAnalysis_CreateConfigFrame();
-        configFrame.name = "ItemAnalysis";
-        configFrame.refresh = ItemAnalysis_RefreshConfigUI;
-        configFrame.default = ItemAnalysis_Reset;
+		ItemInvestigator_CreateConfigFrame();
+        configFrame.name = "ItemInvestigator";
+        configFrame.refresh = ItemInvestigator_RefreshConfigUI;
+        configFrame.default = ItemInvestigator_Reset;
 		InterfaceOptions_AddCategory(configFrame)
 	end
 end
 
 function events:PLAYER_TARGET_CHANGED(...)
-	if ItemAnalysis_CanInspectTarget() then
-		ItemAnalysis_InspectTarget();
+	if ItemInvestigator_CanInspectTarget() then
+		ItemInvestigator_InspectTarget();
 	end
 end
 
 function events:INSPECT_READY()
-	ItemAnalysis_Frame:UnregisterEvent("INSPECT_READY");
- 	ItemAnalysis_ScanTarget();
+	ItemInvestigator_Frame:UnregisterEvent("INSPECT_READY");
+ 	ItemInvestigator_ScanTarget();
 end
 
 function events:INSPECT_ACHIEVEMENT_READY()
-	ItemAnalysis_Frame:UnregisterEvent("INSPECT_ACHIEVEMENT_READY");
+	ItemInvestigator_Frame:UnregisterEvent("INSPECT_ACHIEVEMENT_READY");
 	--##Fix UpdateStatusBar Error##
 	--Reenables the event for the comparison window
 	if AchievementFrameComparison then
@@ -1251,5 +1251,5 @@ function events:PLAYER_REGEN_ENABLED()
 	inCombat = false;
 end
 
-GameTooltip:HookScript("OnTooltipSetUnit", ItemAnalysis_GameTooltipActivated);
-SlashCmdList["ITEMANALYSIS"]=function(msg) ItemAnalysis_CommandHandler(msg) end;
+GameTooltip:HookScript("OnTooltipSetUnit", ItemInvestigator_GameTooltipActivated);
+SlashCmdList["ItemInvestigator"]=function(msg) ItemInvestigator_CommandHandler(msg) end;

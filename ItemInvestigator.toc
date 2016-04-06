@@ -1,0 +1,11 @@
+## Interface: 60200
+## Title: ItemInvestigator
+## Author: Ignifazius
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: ItemInvestigatorDB
+ItemInvestigator.lua
+ItemInvestigator.xml
+
+Localization\Includes.xml
+Data\Includes.xml

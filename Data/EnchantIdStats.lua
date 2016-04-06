@@ -1,4 +1,4 @@
-ItemAnalysis_LoadEffectStats({
+ItemInvestigator_LoadEffectStats({
     ["13"]={},
     ["14"]={},
     ["15"]={},

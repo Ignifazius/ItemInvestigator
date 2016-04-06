@@ -1,4 +1,4 @@
-ItemAnalysis_AddLocale("deDE", {
+ItemInvestigator_AddLocale("deDE", {
 	["StartAnalysis"] = "Item Analysis: Spieler auswählen um analyse zu starten",
 	["ConfigSpecLabel"] = "Alle gescannten Spezialisierungen speichern",
 	["ConfigSpecLabelTooltip"] = "Alle Spezialisierungen speichern, die ein gescanntes Ziel bisher hatte",

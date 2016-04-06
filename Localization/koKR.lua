@@ -1,4 +1,4 @@
-﻿ItemAnalysis_AddLocale("koKR", {
+﻿ItemInvestigator_AddLocale("koKR", {
 	["StartAnalysis"] = "아이템 분석: 플레이어 선택시 분석을 시작합니다",
 	["ScannedMinutesAgo"] = "%i 분전에 스캔됨",
 	["ScannedHoursAgo"] = "%i 시간전에 스캔됨",

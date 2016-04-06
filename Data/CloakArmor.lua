@@ -1,4 +1,4 @@
-ItemAnalysis_LoadCloakArmor({
+ItemInvestigator_LoadCloakArmor({
   [476] = 10,
   [480] = 10,
   [483] = 10,

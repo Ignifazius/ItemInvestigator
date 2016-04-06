@@ -1,4 +1,4 @@
-ItemAnalysis_LoadAllItemSlots({
+ItemInvestigator_LoadAllItemSlots({
 	"HeadSlot", 		
 	"NeckSlot", 		
 	"ShoulderSlot", 	
