@@ -31,5 +31,6 @@ ItemAnalysis_AddLocale("enUS", {
 	["NotHitCapped"] = "Not hit capped",
 	["NotExpCapped"] = "Not expertise capped",
 	["NoArmorSpecialization"] = "No armor specialization bonus",
-	["WrongGear"] = "Has gear with %s"
+	["WrongGear"] = "Has gear with %s",
+	["RingUpgrades"] = "Has %i/%i ring upgrades (ilvl %i)"
 	});

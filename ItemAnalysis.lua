@@ -400,6 +400,7 @@ function ItemAnalysis_ScanTarget()
 			Upgrade = string.match(itemLink, ":%d*:(%d-)|h%[") -- get the last digit of the itemLink (which is always the upgrade lvl; items have, depending on 3rd stat, socket etc. a different amount of digits in the itemString)
 
 			storedPlayer["gear"][slotName]["link"] = itemLink;
+			storedPlayer["gear"][slotName]["itemQuality"] = itemQuality;
 			storedPlayer["gear"][slotName]["name"] = itemName;
 			storedPlayer["gear"][slotName]["ilvl"] = itemIlvl;
 			storedPlayer["gear"][slotName]["class"] = itemClass;
@@ -416,6 +417,7 @@ function ItemAnalysis_ScanTarget()
 	end
 
 	ItemAnalysis_InspectRaidProgress(storedPlayer);
+	
 
 	ItemAnalysis_ReleaseInspectData();
 	
@@ -739,6 +741,8 @@ function ItemAnalysis_AnalyzePlayer(player)
 	ItemAnalysis_CheckForArmorSpecialization(player);
 	ItemAnalysis_CheckWrongStatsForSpec(player);
 	
+	ItemAnalysis_GetLegendaryRingUpgrade(player);
+	
 	--if(ItemAnalysis_IsAHealer(player)) then
 	--	ItemAnalysis_AddEmptyLine(player);
 	--	ItemAnalysis_CheckTotalStat(player, "ITEM_MOD_SPIRIT_SHORT");
@@ -852,6 +856,33 @@ function ItemAnalysis_FormatProgress(n,h,m,c,e)
     elseif ItemAnalysisDB["include-raids"] then
         return LocalText("NA")
     end
+end
+
+function ItemAnalysis_GetLegendaryRingUpgrade(player)
+	local ring1iLvL = 0;
+	local ring2iLvL = 0;
+	local ringiLvL = 0;
+	
+	for index,gearTable in pairs(player["gear"]) do
+		if index == "Finger0Slot" then
+			ring1iLvL = player["gear"]["Finger0Slot"]["itemQuality"]
+			if ring1iLvL == 5 then --legendary
+				ringiLvL = player["gear"]["Finger0Slot"]["ilvl"]
+			end
+		end
+		if index == "Finger1Slot" then
+			ring2iLvL = player["gear"]["Finger1Slot"]["itemQuality"]
+			if ring2iLvL == 5 then
+				ringiLvL = player["gear"]["Finger1Slot"]["ilvl"]		
+			end
+		end
+	end	
+
+	if tonumber(ringiLvL) > 0 then
+		local upgrades = (ringiLvL-735)/3;
+		local summaryItem = {Item = "RingUpgrades", Text = "|cffff8000" .. string.format(LocalText("RingUpgrades"),upgrades, "20",ringiLvL), Value = upgrades};
+		table.insert(player["summary"], summaryItem);
+	end
 end
 
 function ItemAnalysis_AddProgress(player)
