@@ -326,8 +326,9 @@ function ItemInvestigator_InspectRaidProgress(player)
     end
 end
 
-function GetRealItemLevel(itemLink)
+function ItemInvestigator_GetRealItemLevel(itemLink)
 	local S_ITEM_LEVEL = "^"..gsub(ITEM_LEVEL, "%%d", "(%%d+)")
+	print(S_ITEM_LEVEL .. " vs " .. ITEM_LEVEL)
 	local scantip = CreateFrame("GameTooltip", "HiddenTooltip", nil, "GameTooltipTemplate")
 	scantip:SetOwner(UIParent, "ANCHOR_NONE")
 	scantip:SetHyperlink(itemLink)
@@ -340,6 +341,23 @@ function GetRealItemLevel(itemLink)
 			end
 		end
 	end				
+end
+
+function ItemInvestigator_IsItemUpgradbele(itemLink)
+	local S_ITEM_UPGRADE_TOOLTIP_FORMAT = "^"..gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d/", "(%%d+)/")
+	local scantip = CreateFrame("GameTooltip", "HiddenTooltip", nil, "GameTooltipTemplate")
+	scantip:SetOwner(UIParent, "ANCHOR_NONE")
+	scantip:SetHyperlink(itemLink)
+	for i=2,6 do 
+		upgradelvlLine = _G["HiddenTooltipTextLeft"..i]:GetText()
+		if upgradelvlLine and upgradelvlLine ~= "" then
+			local upgradelevel = strmatch(upgradelvlLine, S_ITEM_UPGRADE_TOOLTIP_FORMAT)
+			if upgradelevel then
+				return true
+			end
+		end
+	end	
+	return false
 end
 
 function ItemInvestigator_ScanTarget()
@@ -374,6 +392,7 @@ function ItemInvestigator_ScanTarget()
 	end
 	
 	local itemsScanned = 0;
+	local upgradeableItems = 0;
 	local totalItems = #allItemSlots;
 	for index, slotName in pairs(allItemSlots) do
 		local itemLink = GetInventoryItemLink("target", GetInventorySlotInfo(slotName));
@@ -386,14 +405,18 @@ function ItemInvestigator_ScanTarget()
 			storedPlayer["gear"][slotName] = {};
 			if(debugMode) then
 				print("The escaped link is: ", itemLink:gsub("|", "||"));
-			end
-
+			end			
+			
 			local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?"); --somewhat outdated
 			local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemLink);
 			local stats = GetItemStats(itemLink);
 			
 			if itemQuality == 7 then -- if heirloom
-				itemIlvl = GetRealItemLevel(itemLink)
+				itemIlvl = ItemInvestigator_GetRealItemLevel(itemLink)
+			end
+			
+			if ItemInvestigator_IsItemUpgradbele(itemLink) then
+				upgradeableItems = upgradeableItems + 1;
 			end
 			
 			Upgrade = 0;
@@ -415,6 +438,7 @@ function ItemInvestigator_ScanTarget()
 			itemsScanned = itemsScanned + 1;
 		end
 	end
+	storedPlayer["upgradeableItems"] = upgradeableItems;
 
 	ItemInvestigator_InspectRaidProgress(storedPlayer);
 	
@@ -440,6 +464,7 @@ function ItemInvestigator_ScanTarget()
 		
 		storedPlayer["equipedItems"] = itemsScanned;
 		storedPlayer["slotsForItems"] = totalItems;
+		
 		
 		ItemInvestigator_CalculatePlayer(storedPlayer);
 		
@@ -908,7 +933,7 @@ function ItemInvestigator_CheckForUpgrades(player)
 	end
 	
 	if(upgradedItems > 0) then
-		local summaryItem = {Item = "hasUpgrades", Text = "|cff88ff88" .. string.format(LocalText("HasUpgrades"), upgradedItems, player["equipedItems"]), Value = avgIlvl};
+		local summaryItem = {Item = "hasUpgrades", Text = "|cff88ff88" .. string.format(LocalText("HasUpgrades"), upgradedItems, --[[player["equipedItems"]--]] player["upgradeableItems"]), Value = avgIlvl};
 		table.insert(player["summary"], summaryItem);
 	end
 end

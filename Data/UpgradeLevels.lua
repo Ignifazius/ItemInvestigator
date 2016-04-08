@@ -70,10 +70,11 @@ ItemInvestigator_LoadUpgradeLevels({
 	["530"] = 5,
 	["531"] = 10,
 	
+	--not needed anymore
 	-- legendary ring, just "fake" the upgrade lvl, since the addon otherwise assumes the ring can be upgraded, but isnt
 	--["638"] = 1 -- 786
 	--["639"] = 1 -- 789
-	--["640"]	= 1	-- 792
-	["641"] = 1 -- 795 -- ring fully upgraded
+	--["640"] = 1 -- 792
+	--["641"] = 1 -- 795 -- ring fully upgraded
 });
 
