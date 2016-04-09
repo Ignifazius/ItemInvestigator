@@ -328,7 +328,6 @@ end
 
 function ItemInvestigator_GetRealItemLevel(itemLink)
 	local S_ITEM_LEVEL = "^"..gsub(ITEM_LEVEL, "%%d", "(%%d+)")
-	print(S_ITEM_LEVEL .. " vs " .. ITEM_LEVEL)
 	local scantip = CreateFrame("GameTooltip", "HiddenTooltip", nil, "GameTooltipTemplate")
 	scantip:SetOwner(UIParent, "ANCHOR_NONE")
 	scantip:SetHyperlink(itemLink)
