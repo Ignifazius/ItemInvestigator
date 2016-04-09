@@ -13,5 +13,6 @@ ItemInvestigator_AddLocale("frFR", {
     ["NotHitCapped"] = "Pas capé touché",
     ["NotExpCapped"] = "Pas capé expertise",
     ["NoArmorSpecialization"] = "Pas de spécialisation armure",
-    ["WrongGear"] = "Est équipé avec %s"
+    ["WrongGear"] = "Est équipé avec %s",
+	["Timewarped"] = "Distordu dans le temps"
 	});

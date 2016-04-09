@@ -32,5 +32,6 @@ ItemInvestigator_AddLocale("deDE", {
 	["NotExpCapped"] = "Nicht am Erfahrungslimit", -- not 100% sure, context missing
 	["NoArmorSpecialization"] = "Kein Bonus durch Rüstungsspezialisierung",
 	["WrongGear"] = "Hat Ausrüstung mit %s",
-	["RingUpgrades"] = "Hat %i/%i Ringupgrades (ilvl %i)"
+	["RingUpgrades"] = "Hat %i/%i Ringupgrades (ilvl %i)",
+	["Timewarped"] = "Zeitverzerrt"
 	});

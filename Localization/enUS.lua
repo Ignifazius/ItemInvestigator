@@ -32,5 +32,6 @@ ItemInvestigator_AddLocale("enUS", {
 	["NotExpCapped"] = "Not expertise capped",
 	["NoArmorSpecialization"] = "No armor specialization bonus",
 	["WrongGear"] = "Has gear with %s",
-	["RingUpgrades"] = "Has %i/%i ring upgrades (ilvl %i)"
+	["RingUpgrades"] = "Has %i/%i ring upgrades (ilvl %i)",
+	["Timewarped"] = "Timewarped"
 	});

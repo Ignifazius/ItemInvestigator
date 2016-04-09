@@ -342,21 +342,27 @@ function ItemInvestigator_GetRealItemLevel(itemLink)
 	end				
 end
 
-function ItemInvestigator_IsItemUpgradbele(itemLink)
+function ItemInvestigator_TooltipScan(itemLink)
 	local S_ITEM_UPGRADE_TOOLTIP_FORMAT = "^"..gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d/", "(%%d+)/")
 	local scantip = CreateFrame("GameTooltip", "HiddenTooltip", nil, "GameTooltipTemplate")
+	local upgradedBool = false
+	local timewarpedBool = false
 	scantip:SetOwner(UIParent, "ANCHOR_NONE")
 	scantip:SetHyperlink(itemLink)
 	for i=2,6 do 
-		upgradelvlLine = _G["HiddenTooltipTextLeft"..i]:GetText()
-		if upgradelvlLine and upgradelvlLine ~= "" then
-			local upgradelevel = strmatch(upgradelvlLine, S_ITEM_UPGRADE_TOOLTIP_FORMAT)
+		tooltipLine = _G["HiddenTooltipTextLeft"..i]:GetText()
+		if tooltipLine and tooltipLine ~= "" then
+			local upgradelevel = strmatch(tooltipLine, S_ITEM_UPGRADE_TOOLTIP_FORMAT)
 			if upgradelevel then
-				return true
+				upgradedBool = true
+			end
+			local timewarped = strfind(tooltipLine, LocalText("Timewarped"))
+			if timewarped ~= nil then
+				timewarpedBool = true
 			end
 		end
 	end	
-	return false
+	return upgradedBool, timewarpedBool
 end
 
 function ItemInvestigator_ScanTarget()
@@ -410,11 +416,14 @@ function ItemInvestigator_ScanTarget()
 			local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemLink);
 			local stats = GetItemStats(itemLink);
 			
-			if itemQuality == 7 then -- if heirloom
+			
+			upgr, tw = ItemInvestigator_TooltipScan(itemLink)
+			
+			if itemQuality == 7 or tw then -- if heirloom
 				itemIlvl = ItemInvestigator_GetRealItemLevel(itemLink)
 			end
 			
-			if ItemInvestigator_IsItemUpgradbele(itemLink) then
+			if upgr then
 				upgradeableItems = upgradeableItems + 1;
 			end
 			
