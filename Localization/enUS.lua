@@ -37,8 +37,8 @@ ItemInvestigator_AddLocale("enUS", {
 	
 	["ConfigScannedago"] = "Show time of last scan",
 	["ConfigScannedagoTooltip"] = "Show the time of the last scan of your target.",
-	["ConfigScanInCombatLabel"] = "Scan even if in combat (NOT RECOMMENDED!)",
-	["ConfigScanInCombatLabelTooptip"] = "Scan even if in combat. This may cause Minilags, disable if this is the case.",
+	["ConfigScanInCombatLabel"] = "Scan even if in combat",
+	["ConfigScanInCombatLabelTooptip"] = "Scan even if you are in combat.",
 	["ConfigStatPrio"] = "Show current stat priority",
 	["ConfigStatPrioTooltip"] = "Show the current stat priority of your target."
 	});

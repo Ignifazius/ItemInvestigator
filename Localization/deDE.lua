@@ -36,9 +36,9 @@ ItemInvestigator_AddLocale("deDE", {
 	["Timewarped"] = "Zeitverzerrt",
 	
 	["ConfigScannedago"] = "Zeige vergangene Zeit seit dem letzten Scan",
-	["ConfigScannedagoTooltip"] = "Zeige die Zeit an, zu der das Ziel zletzte gescannt wurde",
-	["ConfigScanInCombatLabel"] = "Auch im kampf scannen (NICHT EMPFHOLEN!)",
-	["ConfigScanInCombatLabelTooptip"] = "Auch im kampf scannen. Dies kann zu Minilags führen. Ausschalten, falls dies der Fall sein sollte.",
+	["ConfigScannedagoTooltip"] = "Zeige die Zeit an, zu der das Ziel zuletzte gescannt wurde",
+	["ConfigScanInCombatLabel"] = "Auch im kampf scannen",
+	["ConfigScanInCombatLabelTooptip"] = "Ziele auch im kampf scannen.",
 	["ConfigStatPrio"] = "Zeige die aktuelle Wertepriorität",
 	["ConfigStatPrioTooltip"] = "Zeige die aktuelle Wertepriorität des Ziels an."
 	});

@@ -249,7 +249,7 @@ function ItemInvestigator_InitializeDatabase()
         end
 		local scanInCombat = (ItemInvestigatorDB and ItemInvestigatorDB["scan-in-combat"]);
         if scanInCombat == nil then
-        	scanInCombat = false
+        	scanInCombat = true
         end
         local guild = (ItemInvestigatorDB and ItemInvestigatorDB["include-guild"]);
         if guild == nil then
