@@ -12,7 +12,7 @@ local allItemSlots = {};
 local upgradeLevels = {};
 local cloakArmor = {};
 
-local currentVersion = "1.5.1";
+local currentVersion = "1.3";
 local gemFrame = CreateFrame('GameTooltip', 'SocketTooltip', UIParent, 'GameTooltipTemplate');
 local addonLoaded = false;
 local enabled = false;
@@ -36,8 +36,11 @@ local playerCacheSize = 200;
 local configFrame = CreateFrame('Frame');
 local configTitle = nil;
 local configCheckboxSpec = nil;
+local configCheckboxStatPrio = nil;
+local configCheckboxScannedAgo = nil;
 local configCheckboxRaid = nil;
 local configCheckboxRaidsInCombat = nil;
+local configCheckboxScanInCombat = nil;
 local configCheckboxGuild = nil;
 
 function ItemInvestigator_CreateCheckbox(label, description, onClick)
@@ -64,11 +67,23 @@ function ItemInvestigator_CreateConfigFrame()
     	function(self, value) ItemInvestigator_SetIncludeSpec(value) end)
     configCheckboxSpec:SetPoint("TOPLEFT", configTitle, "BOTTOMLEFT", 0, -8)
 
+	configCheckboxScannedAgo = ItemInvestigator_CreateCheckbox(
+		LocalText("ConfigScannedago"),
+		LocalText("ConfigScannedagoTooltip"),
+		function(self, value) ItemInvestigator_SetScannedAgo(value) end)
+	configCheckboxScannedAgo:SetPoint("TOPLEFT", configCheckboxSpec, "BOTTOMLEFT", 0, -8)
+	
+	configCheckboxStatPrio = ItemInvestigator_CreateCheckbox(
+		LocalText("ConfigStatPrio"),
+		LocalText("ConfigStatPrioTooltip"),
+		function(self, value) ItemInvestigator_SetStatPrio(value) end)
+	configCheckboxStatPrio:SetPoint("TOPLEFT", configCheckboxScannedAgo, "BOTTOMLEFT", 0, -8)
+	
     configCheckboxRaid = ItemInvestigator_CreateCheckbox(
     	LocalText("ConfigRaidsLabel"),
     	LocalText("ConfigRaidsLabelTooltip"),
     	function(self, value) ItemInvestigator_SetIncludeRaids(value) end)
-    configCheckboxRaid:SetPoint("TOPLEFT", configCheckboxSpec, "BOTTOMLEFT", 0, -8)
+    configCheckboxRaid:SetPoint("TOPLEFT", configCheckboxStatPrio, "BOTTOMLEFT", 0, -8)
 
     configCheckboxRaidsInCombat = ItemInvestigator_CreateCheckbox(
     	LocalText("ConfigRaidsInCombatLabel"),
@@ -81,13 +96,22 @@ function ItemInvestigator_CreateConfigFrame()
         LocalText("ConfigGuildLabelTooltip"),
     	function(self, value) ItemInvestigator_SetIncludeGuild(value) end)
     configCheckboxGuild:SetPoint("TOPLEFT", configCheckboxRaidsInCombat, "BOTTOMLEFT", -24, -8)
+	
+	configCheckboxScanInCombat = ItemInvestigator_CreateCheckbox(
+    	LocalText("ConfigScanInCombatLabel"),
+        LocalText("ConfigScanInCombatLabelTooptip"),
+    	function(self, value) ItemInvestigator_SetScanInCombat(value) end)
+    configCheckboxScanInCombat:SetPoint("TOPLEFT", configCheckboxGuild, "BOTTOMLEFT", 0, -8)
 end
 
 function ItemInvestigator_RefreshConfigUI()
 	configCheckboxSpec:SetChecked(ItemInvestigatorDB["include-spec"]);
+	configCheckboxScannedAgo:SetChecked(ItemInvestigatorDB["include-scanned-ago"])
 	configCheckboxRaid:SetChecked(ItemInvestigatorDB["include-raids"]);
 	configCheckboxRaidsInCombat:SetChecked(ItemInvestigatorDB["raids-in-combat"]);
+	configCheckboxScanInCombat:SetChecked(ItemInvestigatorDB["scan-in-combat"]);
 	configCheckboxGuild:SetChecked(ItemInvestigatorDB["include-guild"]);
+	configCheckboxStatPrio:SetChecked(ItemInvestigatorDB["include-stat-prio"])
 end
 
 -----------------------
@@ -170,8 +194,22 @@ function ItemInvestigator_SetIncludeRaids(b)
     ItemInvestigator_InitializeDatabase();
 end
 
+function ItemInvestigator_SetScannedAgo(b)
+	ItemInvestigatorDB["include-scanned-ago"] = b;
+    ItemInvestigator_InitializeDatabase();
+end
+
+function ItemInvestigator_SetStatPrio(b)
+	ItemInvestigatorDB["include-stat-prio"] = b;
+    ItemInvestigator_InitializeDatabase();
+end
+
 function ItemInvestigator_SetRaidsInCombat(b)
 	ItemInvestigatorDB["raids-in-combat"] = b;
+end
+
+function ItemInvestigator_SetScanInCombat(b)
+	ItemInvestigatorDB["scan-in-combat"] = b;
 end
 
 function ItemInvestigator_SetIncludeGuild(b)
@@ -209,16 +247,33 @@ function ItemInvestigator_InitializeDatabase()
         if raidsInCombat == nil then
         	raidsInCombat = false
         end
+		local scanInCombat = (ItemInvestigatorDB and ItemInvestigatorDB["scan-in-combat"]);
+        if scanInCombat == nil then
+        	scanInCombat = false
+        end
         local guild = (ItemInvestigatorDB and ItemInvestigatorDB["include-guild"]);
         if guild == nil then
         	guild = false
         end
+		local scannedAgo = (ItemInvestigatorDB and ItemInvestigatorDB["include-scanned-ago"]);
+        if scannedAgo == nil then
+        	scannedAgo = true
+        end
+		
+		local statPrio = (ItemInvestigatorDB and ItemInvestigatorDB["include-stat-prio"]);
+        if statPrio == nil then
+        	statPrio = true
+        end
+		
 		ItemInvestigatorDB = {
 			["version"] = currentVersion,
 			["include-spec"] = spec,
 			["include-raids"] = raids,
 			["raids-in-combat"] = raidsInCombat,
+			["scan-in-combat"] = scanInCombat,
 			["include-guild"] = guild,
+			["include-scanned-ago"] = scannedAgo,
+			["include-stat-prio"] = statPrio,
 			["storedPlayers"] = {},
 			["localItemText"] = {}
 		};
@@ -487,9 +542,14 @@ function ItemInvestigator_ScanTarget()
 			end
 		end
 		
-		if(itemsScanned > 0) then
-			ItemInvestigator_AnalyzePlayer(storedPlayer);
-			ItemInvestigator_ReinsertPlayerOnTop(foundPlayerIndex, storedPlayer);
+		if (itemsScanned > 0) then
+			if (ItemInvestigatorDB["scan-in-combat"]) then --if scan enabled		
+				ItemInvestigator_AnalyzePlayer(storedPlayer);
+				ItemInvestigator_ReinsertPlayerOnTop(foundPlayerIndex, storedPlayer);				
+			elseif (not UnitAffectingCombat("player")) then -- if scan disabled AND player not in combat
+				ItemInvestigator_AnalyzePlayer(storedPlayer);
+				ItemInvestigator_ReinsertPlayerOnTop(foundPlayerIndex, storedPlayer);	
+			end
 		end
 		
 		GameTooltip:SetUnit("target");
@@ -741,13 +801,15 @@ end
 function ItemInvestigator_AnalyzePlayer(player)
     local minutesDiff = math.floor((difftime (time(), player["scannedAt"]) / 60)+0.5);
 
-    if(minutesDiff < 60) then
-        local summaryItem = {Item = "time", Text = string.format(LocalText("ScannedMinutesAgo"), minutesDiff), Value = minutesDiff};
-        table.insert(player["summary"], summaryItem);
-    else
-        local summaryItem = {Item = "time", Text = string.format(LocalText("ScannedHoursAgo"), math.floor((minutesDiff/60)+0.5)), Value = minutesDiff};
-        table.insert(player["summary"], summaryItem);
-    end
+	if (ItemInvestigatorDB["include-scanned-ago"]) then
+		if(minutesDiff < 60) then
+			local summaryItem = {Item = "time", Text = string.format(LocalText("ScannedMinutesAgo"), minutesDiff), Value = minutesDiff};
+			table.insert(player["summary"], summaryItem);
+		else
+			local summaryItem = {Item = "time", Text = string.format(LocalText("ScannedHoursAgo"), math.floor((minutesDiff/60)+0.5)), Value = minutesDiff};
+			table.insert(player["summary"], summaryItem);
+		end
+	end
 
     if ItemInvestigatorDB["include-guild"] and player["guildRankName"] then
         local summaryItem = {Item = "guildRank", Text = string.format(LocalText("Rank"), player["guildRankName"], player["guildRankIndex"]), Value = player["guildRankName"]};
@@ -759,8 +821,9 @@ function ItemInvestigator_AnalyzePlayer(player)
         table.insert(player["summary"], summaryItem);
     end
 
-	ItemInvestigator_CheckStatPrio(player, 4);
-	
+	if (ItemInvestigatorDB["include-stat-prio"]) then
+		ItemInvestigator_CheckStatPrio(player, 4);
+	end
 	ItemInvestigator_CalculateAverageItemLevel(player);
 	ItemInvestigator_AddProgress(player);
 

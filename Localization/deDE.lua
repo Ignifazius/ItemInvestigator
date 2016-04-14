@@ -33,5 +33,12 @@ ItemInvestigator_AddLocale("deDE", {
 	["NoArmorSpecialization"] = "Kein Bonus durch Rüstungsspezialisierung",
 	["WrongGear"] = "Hat Ausrüstung mit %s",
 	["RingUpgrades"] = "Hat %i/%i Ringupgrades (ilvl %i)",
-	["Timewarped"] = "Zeitverzerrt"
+	["Timewarped"] = "Zeitverzerrt",
+	
+	["ConfigScannedago"] = "Zeige vergangene Zeit seit dem letzten Scan",
+	["ConfigScannedagoTooltip"] = "Zeige die Zeit an, zu der das Ziel zletzte gescannt wurde",
+	["ConfigScanInCombatLabel"] = "Auch im kampf scannen (NICHT EMPFHOLEN!)",
+	["ConfigScanInCombatLabelTooptip"] = "Auch im kampf scannen. Dies kann zu Minilags führen. Ausschalten, falls dies der Fall sein sollte.",
+	["ConfigStatPrio"] = "Zeige die aktuelle Wertepriorität",
+	["ConfigStatPrioTooltip"] = "Zeige die aktuelle Wertepriorität des Ziels an."
 	});
