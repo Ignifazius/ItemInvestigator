@@ -172,6 +172,7 @@ function ItemInvestigator_Enable()
 	ItemInvestigator_Frame:RegisterEvent("PLAYER_TARGET_CHANGED");
 	ItemInvestigator_Frame:RegisterEvent("PLAYER_REGEN_DISABLED");
 	ItemInvestigator_Frame:RegisterEvent("PLAYER_REGEN_ENABLED");
+	--ItemInvestigator_Frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT");
 	enabled = true;
 end
 
@@ -180,6 +181,7 @@ function ItemInvestigator_Disable()
 	ItemInvestigator_Frame:UnregisterEvent("PLAYER_TARGET_CHANGED");
 	ItemInvestigator_Frame:UnregisterEvent("PLAYER_REGEN_DISABLED");
 	ItemInvestigator_Frame:UnregisterEvent("PLAYER_REGEN_ENABLED");
+	--ItemInvestigator_Frame:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
 	enabled = false;
 end
 
@@ -1322,6 +1324,32 @@ function events:PLAYER_TARGET_CHANGED(...)
 	if ItemInvestigator_CanInspectTarget() then
 		ItemInvestigator_InspectTarget();
 	end
+end
+
+function events:UPDATE_MOUSEOVER_UNIT()
+	print("FIRED")
+	--local storedPlayer = ItemInvestigator_GetPlayerByName(name)
+	--if storedPlayer then
+		local name = UnitName("mouseover")
+		local unitid = "mouseover";
+		if(UnitIsPlayer(unitid) and enabled) then
+			print("FIRED 2")
+			local foundPlayers = ItemInvestigator_GetPlayerByName(name);
+			
+			if(ItemInvestigator_tablelength(foundPlayers) == 0) then
+				GameTooltip:AddLine(LocalText("StartAnalysis"), true);
+			else
+				local isNext = false;
+				table.foreach(foundPlayers, function(index, player)
+					if(isNext) then
+						GameTooltip:AddLine("-----");
+					end
+					isNext = true;
+					ItemInvestigator_AppendPlayerToTooltip(player);
+				end);
+			end
+		end
+	--end
 end
 
 function events:INSPECT_READY()
