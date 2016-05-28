@@ -1145,7 +1145,8 @@ function ItemInvestigator_IsATank(player)
 		spec == 250 or
 		spec == 73 or
 		spec == 66 or
-		spec == 268
+		spec == 268 or
+		spec == 577
 		) then
 		return true;
 	end
@@ -1166,7 +1167,8 @@ function ItemInvestigator_IsAMeleeDPS(player)
 		spec == 263 or
 		spec == 71 or
 		spec == 72 or
-		spec == 269
+		spec == 269 or
+		spec == 581
 		) then
 		return true;
 	end

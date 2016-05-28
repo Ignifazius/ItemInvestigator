@@ -22,7 +22,8 @@ ItemInvestigator_LoadWrongStatsForSpec({
 --		Agility Tanks
 --	104 DRUID_Guardian
 --	268 MONK_Brewmaster
-[Set{104, 268}] = 	
+--  577 DEAMONHUNTER_Havoc
+[Set{104, 268, 577}] = 	
 { 	--"ITEM_MOD_INTELLECT_SHORT",
 	--"ITEM_MOD_STRENGTH_SHORT", 
 	"ITEM_MOD_SPIRIT_SHORT",
@@ -51,7 +52,8 @@ ItemInvestigator_LoadWrongStatsForSpec({
 --	253 HUNTER_Beast Mastery
 --	263 SHAMAN_Enhancement
 --	269 MONK_Windwalker
-[Set{103, 260, 259, 259, 261, 254, 255, 253, 263, 269}] = 		
+-- 	581 DEAMONHUNTER_Vengeance
+[Set{103, 260, 259, 259, 261, 254, 255, 253, 263, 269, 581}] = 		
 { 	--"ITEM_MOD_INTELLECT_SHORT",
 	--"ITEM_MOD_STRENGTH_SHORT", 
 	"ITEM_MOD_SPIRIT_SHORT",
