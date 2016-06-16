@@ -1252,7 +1252,7 @@ function ItemInvestigator_GetArmorSpecBonusType(player)
 	if(player["class"] == "SHAMAN" or player["class"] == "HUNTER") then
 		return ItemInvestigatorDB["localItemText"][cultureCode]["Mail"];
 	end
-	if(player["class"] == "ROGUE" or player["class"] == "DRUID" or player["class"] == "MONK") then
+	if(player["class"] == "ROGUE" or player["class"] == "DRUID" or player["class"] == "MONK" or player["class"] == "DEMONHUNTER") then
 		return ItemInvestigatorDB["localItemText"][cultureCode]["Leather"];
 	end
 	if(player["class"] == "MAGE" or player["class"] == "WARLOCK" or player["class"] == "PRIEST") then
