@@ -474,9 +474,9 @@ function ItemInvestigator_ScanTarget()
 			
 			upgr, tw = ItemInvestigator_TooltipScan(itemLink)
 			
-			if itemQuality == 7 or tw then -- if heirloom
+			--if itemQuality == 7 or tw then -- if heirloom
 				itemIlvl = ItemInvestigator_GetRealItemLevel(itemLink)
-			end
+			--end
 			
 			if upgr then
 				upgradeableItems = upgradeableItems + 1;
