@@ -476,9 +476,9 @@ function ItemInvestigator_ScanTarget()
 			
 			upgr, tw = ItemInvestigator_TooltipScan(itemLink)
 			
-			if itemQuality == 7 or tw then -- if heirloom
+			--if itemQuality == 7 or tw then -- if heirloom
 				itemIlvl = ItemInvestigator_GetRealItemLevel(itemLink)
-			end
+			--end
 			
 			if upgr then
 				upgradeableItems = upgradeableItems + 1;
@@ -1147,7 +1147,8 @@ function ItemInvestigator_IsATank(player)
 		spec == 250 or
 		spec == 73 or
 		spec == 66 or
-		spec == 268
+		spec == 268 or
+		spec == 577
 		) then
 		return true;
 	end
@@ -1168,7 +1169,8 @@ function ItemInvestigator_IsAMeleeDPS(player)
 		spec == 263 or
 		spec == 71 or
 		spec == 72 or
-		spec == 269
+		spec == 269 or
+		spec == 581
 		) then
 		return true;
 	end
@@ -1252,7 +1254,7 @@ function ItemInvestigator_GetArmorSpecBonusType(player)
 	if(player["class"] == "SHAMAN" or player["class"] == "HUNTER") then
 		return ItemInvestigatorDB["localItemText"][cultureCode]["Mail"];
 	end
-	if(player["class"] == "ROGUE" or player["class"] == "DRUID" or player["class"] == "MONK") then
+	if(player["class"] == "ROGUE" or player["class"] == "DRUID" or player["class"] == "MONK" or player["class"] == "DEMONHUNTER") then
 		return ItemInvestigatorDB["localItemText"][cultureCode]["Leather"];
 	end
 	if(player["class"] == "MAGE" or player["class"] == "WARLOCK" or player["class"] == "PRIEST") then
