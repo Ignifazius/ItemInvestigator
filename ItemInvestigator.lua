@@ -469,10 +469,30 @@ function ItemInvestigator_ScanTarget()
 				print("The escaped link is: ", itemLink:gsub("|", "||"));
 			end			
 			
-			local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?"); --somewhat outdated
+			--local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?"); --somewhat outdated
 			local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemLink);
+			--[[local item, itemId, enchantId, gemId1, gemId2, gemId3, gemId4, suffixId, uniqueId, linkLevel, specializationID, upgradeId, instanceDifficultyId, numBonusIds, bonusId1, bonusId2, upgradeValue = strsplit(":", itemLink);
+			print("item "..item)
+			print("itemId "..itemId)
+			print("enchantId "..enchantId)
+			print("gemId1 "..gemId1)
+			print("gemId2 "..gemId2)
+			print("gemId3 "..gemId3)
+			print("gemId4 "..gemId4)
+			print("suffixId "..suffixId)
+			print("uniqueId "..uniqueId)
+			print("linkLevel "..linkLevel)
+			print("specializationID "..specializationID)
+			print("upgradeId "..upgradeId)
+			print("instanceDifficultyId "..instanceDifficultyId)
+			print("numBonusIds "..numBonusIds)
+			print("bonusId1 "..bonusId1)
+			print("bonusId2 "..bonusId2)
+			print("upgradeValue "..upgradeValue)
+			print("----")
+			printable = gsub(itemLink, "\124", "\124\124");
+			print(printable)]]--
 			local stats = GetItemStats(itemLink);
-			
 			
 			upgr, tw = ItemInvestigator_TooltipScan(itemLink)
 			
@@ -485,7 +505,9 @@ function ItemInvestigator_ScanTarget()
 			end
 			
 			Upgrade = 0;
-			Upgrade = string.match(itemLink, ":%d*:(%d-)|h%[") -- get the last digit of the itemLink (which is always the upgrade lvl; items have, depending on 3rd stat, socket etc. a different amount of digits in the itemString)
+			Upgrade = string.match(itemLink, "(%d-):%d*:%d*:%d*|h%[") -- get the last digit of the itemLink (which is always the upgrade lvl; items have, depending on 3rd stat, socket etc. a different amount of digits in the itemString)
+
+
 
 			storedPlayer["gear"][slotName]["link"] = itemLink;
 			storedPlayer["gear"][slotName]["itemQuality"] = itemQuality;
