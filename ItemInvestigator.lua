@@ -941,7 +941,8 @@ end
 function ItemInvestigator_CalculateAverageItemLevel(player)
 	local totalItemLevel = 0;
 	for index,gearTable in pairs(player["gear"]) do
-		totalItemLevel = totalItemLevel + gearTable["ilvl"] + (upgradeLevels[gearTable["upgrade"]] or 0);
+		--totalItemLevel = totalItemLevel + gearTable["ilvl"] + (upgradeLevels[gearTable["upgrade"]] or 0);
+		totalItemLevel = totalItemLevel + gearTable["ilvl"]; --removed (upgradeLevels[gearTable["upgrade"]] or 0) due to changed derivation of ilvl
 		--print(gearTable["link"] .. " = " .. gearTable["ilvl"] .. " + " .. (upgradeLevels[gearTable["upgrade"]] or 0));
 	end
 	
