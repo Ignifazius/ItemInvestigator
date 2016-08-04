@@ -471,8 +471,9 @@ function ItemInvestigator_ScanTarget()
 			
 			--local _, _, color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Upgrade, Name = string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%d*)|?h?%[?([^%[%]c]*)%]?|?h?|?r?"); --somewhat outdated
 			local itemName, itemlink, itemQuality, itemIlvl, itemReqLevel, itemClass, itemSubclass, itemMaxStack, itemEquipSlot = GetItemInfo(itemLink);
-			--[[local item, itemId, enchantId, gemId1, gemId2, gemId3, gemId4, suffixId, uniqueId, linkLevel, specializationID, upgradeId, instanceDifficultyId, numBonusIds, bonusId1, bonusId2, upgradeValue = strsplit(":", itemLink);
-			print("item "..item)
+			local item, itemId, enchantId, gemId1, gemId2, gemId3, gemId4, suffixId, uniqueId, linkLevel, specializationID, upgradeId, instanceDifficultyId, numBonusIds, bonusId1, bonusId2, upgradeValue = strsplit(":", itemLink);
+			local Enchant = enchantId;
+			--[[print("item "..item)
 			print("itemId "..itemId)
 			print("enchantId "..enchantId)
 			print("gemId1 "..gemId1)
@@ -1045,8 +1046,8 @@ end
 function ItemInvestigator_CheckForMissingEnchants(player)
 	local totalMissingEnchants = 0;
 	for index,gearTable in pairs(player["gear"]) do
-		-- print(gearTable["link"] .. " = " .. gearTable["enchant"])
-		if gearTable["enchant"] == "0" then
+		--print(gearTable["link"] .. " = " .. gearTable["enchant"])
+		if gearTable["enchant"] == "" then
 			if 	index == "NeckSlot" or
 				index == "BackSlot" or 
 				index == "Finger0Slot" or 
